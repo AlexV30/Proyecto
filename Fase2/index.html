@@ -1,0 +1,223 @@
+<!DOCTYPE html> 
+<html lang="es"> 
+<head> 
+<meta charset="UTF-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+<title>Productos Frescos del Campo</title> 
+<style> 
+html { scroll-behavior:smooth; } 
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Arial, sans-serif; } 
+body { background:#f9f9f9; color:#333; } 
+header { background:#2f7d32; padding:15px 40px; color:#fff; position:sticky; top:0; z-index:900; box-shadow: 0 2px 5px rgba(0,0,0,0.1); } 
+.nav { display:flex; justify-content:space-between; align-items:center; } 
+.nav ul { list-style:none; display:flex; gap:20px; } 
+.nav a { color:#fff; text-decoration:none; font-weight:bold; } 
+.search-login { display:flex; gap:15px; align-items:center; } 
+.search-login input { padding:8px 12px; border-radius:20px; border:none; outline: none; width: 200px; } 
+
+.hero { background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('img/fondo-granja.png') center/cover no-repeat; padding:120px 40px; color:#fff; text-align:center; } 
+.hero h1 { font-size:3.2rem; margin-bottom:20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); } 
+.hero p { max-width:700px; margin:0 auto 30px; font-size:1.2rem; } 
+.btn { background:#ff9800; color:#fff; padding:14px 30px; text-decoration:none; border-radius:6px; font-weight:bold; border:none; cursor:pointer; display:inline-block; transition: all 0.3s ease; } 
+.btn:hover { background:#e68a00; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,152,0,0.4); } 
+
+section { scroll-margin-top:80px; } 
+.features { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px; padding:60px 40px; background:#fff; text-align:center; border-bottom: 1px solid #eee; } 
+.feature h3 { margin-bottom:10px; color:#2f7d32; } 
+
+.products { padding:80px 40px; } 
+.products h2 { text-align:center; margin-bottom:50px; font-size: 2.2rem; color: #2f7d32; } 
+
+.product-grid { 
+    display:grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap:40px; 
+    max-width: 1100px; 
+    margin: 0 auto; 
+} 
+.product { 
+    background:#fff; 
+    border-radius:15px; 
+    padding:25px; 
+    text-align:center; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+    transition: transform 0.3s ease;
+    border: 1px solid #eee;
+} 
+.product:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+.product img { width:100%; height: 320px; object-fit:cover; border-radius:10px; margin-bottom:20px; cursor:pointer; } 
+
+.product h4 { margin-bottom:10px; font-size: 1.5rem; } 
+.price { font-weight:bold; margin-bottom:20px; color:#2f7d32; font-size: 1.3rem; } 
+.product button { background:#2f7d32; color:#fff; border:none; padding:12px 20px; border-radius:6px; cursor:pointer; font-weight: bold; width: 100%; transition: background 0.3s; } 
+
+.cta { background:#2f7d32; color:#fff; text-align:center; padding:80px 40px; } 
+footer { background:#1b5e20; color:#fff; text-align:center; padding:25px; } 
+
+/* Modales */
+#toggle-registro { display:none; } 
+.modal-registro { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; } 
+.modal-content { background:#fff; padding:40px; border-radius:15px; width:380px; position:relative; text-align:center; } 
+#toggle-registro:checked ~ .modal-registro { display:flex; } 
+
+#product-preview { display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; } 
+#preview-content { background:#fff; border-radius:15px; padding:30px; max-width:600px; width: 90%; text-align:center; position:relative; } 
+#preview-content img { width:100%; max-height:450px; object-fit:cover; border-radius:10px; margin-bottom:20px; } 
+#close-preview { position:absolute; top:15px; right:20px; font-size:35px; cursor:pointer; } 
+
+@media (max-width:850px){ .product-grid { grid-template-columns: 1fr; max-width: 500px; } }
+</style> 
+</head> 
+<body id="inicio"> 
+ 
+<input type="checkbox" id="toggle-registro"> 
+ 
+<header> 
+  <nav class="nav"> 
+    <ul> 
+      <li><a href="#inicio">Inicio</a></li> 
+      <li><a href="#seccion-productos">Productos</a></li> 
+      <li><a href="#seccion-nosotros">Nosotros</a></li> 
+    </ul> 
+    <div class="search-login"> 
+      <input type="text" placeholder="Buscar producto..." id="search-input" /> 
+      <label for="toggle-registro" style="cursor:pointer; font-weight:bold;">Iniciar Sesión</label> 
+    </div> 
+  </nav> 
+</header> 
+ 
+<div class="modal-registro"> 
+  <div class="modal-content"> 
+    <label for="toggle-registro" style="position:absolute; top:10px; right:20px; font-size:30px; cursor:pointer;">&times;</label> 
+    <h2 style="color:#2f7d32; margin-bottom:20px;">Crear cuenta</h2> 
+    <form id="form-registro"> 
+      <input type="text" placeholder="Nombre completo" required style="width:100%; padding:12px; margin:10px 0; border:1px solid #ccc; border-radius:6px;"> 
+      <input type="email" placeholder="Correo electrónico" required style="width:100%; padding:12px; margin:10px 0; border:1px solid #ccc; border-radius:6px;"> 
+      <input type="password" placeholder="Contraseña" required style="width:100%; padding:12px; margin:10px 0; border:1px solid #ccc; border-radius:6px;"> 
+      <button type="submit" class="btn" style="width:100%; margin-top:15px;">Registrarse Ahora</button> 
+    </form> 
+  </div> 
+</div> 
+ 
+<section class="hero"> 
+  <h1>Frescura del Campo en tu Hogar</h1> 
+  <p>Productos 100% orgánicos, cosechados hoy y entregados en la puerta de tu casa.</p> 
+  <a href="#seccion-productos" class="btn">Explorar la Cosecha</a> 
+</section> 
+ 
+<section class="features" id="seccion-nosotros"> 
+  <div class="feature"><h3>🌿 100% Natural</h3><p>Sin pesticidas ni químicos.</p></div> 
+  <div class="feature"><h3>🚀 Envío Express</h3><p>Del campo a tu mesa en 24h.</p></div> 
+  <div class="feature"><h3>👩‍🌾 Apoyo Local</h3><p>Trato directo con el agricultor.</p></div> 
+</section> 
+ 
+<section class="products" id="seccion-productos"> 
+  <h2>Nuestros Productos Destacados</h2> 
+  <div class="product-grid" id="main-grid"> 
+    <div class="product"> 
+      <img src="img/manzanas.PNG" alt="Manzanas Ecologicas" /> 
+      <h4>Manzanas Ecologicas</h4> 
+      <div class="price">€3.99 / kg</div> 
+      <button class="add-to-cart">Añadir al Carrito</button> 
+    </div> 
+    <div class="product"> 
+      <img src="img/zanahorias.png" alt="Zanahorias Orgánicas" /> 
+      <h4>Zanahorias Orgánicas</h4> 
+      <div class="price">€2.49 / kg</div> 
+      <button class="add-to-cart">Añadir al Carrito</button> 
+    </div> 
+    <div class="product"> 
+      <img src="img/lechuga.png" alt="Lechuga Fresca" /> 
+      <h4>Lechuga Fresca</h4> 
+      <div class="price">€1.99 / unidad</div> 
+      <button class="add-to-cart">Añadir al Carrito</button> 
+    </div> 
+    <div class="product"> 
+      <img src="img/fresas.png" alt="Fresas Frescas" /> 
+      <h4>Fresas Frescas</h4> 
+      <div class="price">€4.99 / kg</div> 
+      <button class="add-to-cart">Añadir al Carrito</button> 
+    </div> 
+  </div> 
+</section> 
+ 
+<div id="product-preview"> 
+  <div id="preview-content"> 
+    <span id="close-preview">&times;</span> 
+    <img id="preview-img" src="" /> 
+    <h4 id="preview-name"></h4> 
+    <div class="price" id="preview-price"></div> 
+    <button id="preview-add" class="btn">Añadir al Carrito</button> 
+  </div> 
+</div> 
+
+<section class="cta"> 
+    <h2>¿Quieres comer más sano?</h2> 
+    <p>Únete a nuestra suscripción mensual y recibe una caja sorpresa cada semana.</p><br>
+    <a href="productos.html" class="btn">Saber más</a> 
+</section> 
+
+<footer> 
+    <p>&copy; 2026 Productos Frescos del Campo - Alimentación Sostenible</p> 
+</footer> 
+
+<script> 
+// Carrito
+const addToCart = (name) => alert("🛒 Añadido: " + name); 
+
+// Modal de Previsualización
+const previewContainer = document.getElementById('product-preview'); 
+const previewImage = document.getElementById('preview-img'); 
+const previewName = document.getElementById('preview-name'); 
+const previewPrice = document.getElementById('preview-price'); 
+
+function openPreview(productElement) {
+    const img = productElement.querySelector('img').src;
+    const name = productElement.querySelector('h4').textContent;
+    const price = productElement.querySelector('.price').textContent;
+    
+    previewImage.src = img;
+    previewName.textContent = name;
+    previewPrice.textContent = price;
+    previewContainer.style.display = 'flex';
+}
+
+// Eventos para productos
+document.querySelectorAll('.product').forEach(product => { 
+    product.querySelector('img').addEventListener('click', () => openPreview(product)); 
+    product.querySelector('.add-to-cart').addEventListener('click', () => addToCart(product.querySelector('h4').textContent)); 
+}); 
+
+document.getElementById('close-preview').addEventListener('click', () => previewContainer.style.display = 'none'); 
+
+// --- LÓGICA DEL BUSCADOR ---
+document.getElementById('search-input').addEventListener('keypress', function(e){ 
+    if(e.key === 'Enter'){ 
+        const query = this.value.toLowerCase().trim();
+        const products = document.querySelectorAll('.product');
+        let match = null;
+
+        products.forEach(p => {
+            const name = p.querySelector('h4').textContent.toLowerCase();
+            if(name.includes(query)) { match = p; }
+        });
+
+        if(match) {
+            openPreview(match); // Si lo encuentra, abre el modal
+            this.value = "";    // Limpia el buscador
+        } else {
+            alert("No se encontró el producto: " + query);
+        }
+    } 
+}); 
+
+// Registro
+document.getElementById('form-registro').addEventListener('submit', (e) => { 
+    e.preventDefault(); 
+    document.getElementById('toggle-registro').checked = false; 
+    const nombre = e.target.querySelector('input').value;
+    document.querySelector('label[for="toggle-registro"]').innerHTML = "Hola, " + nombre;
+}); 
+</script> 
+</body> 
+</html>
