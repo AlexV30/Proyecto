@@ -1,0 +1,116 @@
+html { scroll-behavior: smooth; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { background: #f9f9f9; color: #333; }
+
+/* Header */
+header { background: #2f7d32; padding: 15px 40px; color: #fff; position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.nav { display: flex; justify-content: space-between; align-items: center; }
+.nav ul { list-style: none; display: flex; gap: 20px; }
+.nav a { color: #fff; text-decoration: none; font-weight: bold; }
+.nav a:hover { color: #ff9800; }
+.header-right { display: flex; gap: 15px; align-items: center; }
+.header-right input { padding: 8px 12px; border-radius: 20px; border: none; outline: none; width: 200px; font-size: 0.9rem; }
+
+/* Botones */
+.btn { background: #ff9800; color: #fff; padding: 14px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; display: inline-block; transition: all 0.3s; }
+.btn:hover { background: #e68a00; transform: translateY(-2px); }
+.btn-sm { padding: 7px 15px; font-size: 0.85rem; background: #ff9800; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; text-decoration: none; }
+.btn-salir { background: none; border: 1px solid #fff; color: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+
+/* Barra bienvenida */
+#barra-bienvenida { background: #e8f5e9; border-bottom: 1px solid #a5d6a7; color: #1b5e20; padding: 12px 40px; font-weight: bold; display: none; }
+
+/* Toast */
+#toast { position: fixed; top: 18px; right: 18px; z-index: 99999; display: flex; flex-direction: column; gap: 8px; }
+.toast-msg { padding: 13px 18px; border-radius: 10px; font-weight: 600; font-size: 0.86rem; box-shadow: 0 4px 15px rgba(0,0,0,0.12); animation: slideIn 0.3s; max-width: 300px; }
+.toast-exito { background: #e8f5e9; color: #1b5e20; border-left: 4px solid #4caf50; }
+.toast-error { background: #ffebee; color: #c62828; border-left: 4px solid #f44336; }
+.toast-info  { background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196f3; }
+@keyframes slideIn { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+
+/* Hero */
+.hero { background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('../Fase2/img/fondo-granja.png') center/cover no-repeat; padding: 130px 40px; color: #fff; text-align: center; }
+.hero h1 { font-size: 3.2rem; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+.hero p { max-width: 700px; margin: 0 auto 30px; font-size: 1.2rem; }
+
+/* Features */
+section { scroll-margin-top: 80px; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 20px; padding: 60px 40px; background: #fff; text-align: center; border-bottom: 1px solid #eee; }
+.feature h3 { margin-bottom: 10px; color: #2f7d32; }
+
+/* Productos destacados (portada) */
+.products { padding: 80px 40px; }
+.products h2 { text-align: center; margin-bottom: 50px; font-size: 2.2rem; color: #2f7d32; }
+.product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; max-width: 1100px; margin: 0 auto; }
+.product { background: #fff; border-radius: 15px; padding: 25px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.06); transition: transform 0.3s; border: 1px solid #eee; }
+.product:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+.product img { width: 100%; height: 310px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; cursor: pointer; }
+.product h4 { margin-bottom: 10px; font-size: 1.4rem; }
+.price { font-weight: bold; margin-bottom: 20px; color: #2f7d32; font-size: 1.2rem; }
+.product button { background: #2f7d32; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.3s; }
+.product button:hover { background: #1b5e20; }
+
+/* CTA y footer */
+.cta { background: #2f7d32; color: #fff; text-align: center; padding: 80px 40px; }
+footer { background: #1b5e20; color: #fff; text-align: center; padding: 25px; }
+
+/* Modal preview producto */
+#product-preview { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; }
+#preview-content { background: #fff; border-radius: 15px; padding: 30px; max-width: 580px; width: 90%; text-align: center; position: relative; }
+#preview-content img { width: 100%; max-height: 420px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
+#close-preview { position: absolute; top: 15px; right: 20px; font-size: 35px; cursor: pointer; color: #666; }
+
+/* Panel cesta */
+#panelCesta { position: fixed; right: -380px; top: 0; width: 340px; height: 100%; background: #fff; box-shadow: -4px 0 20px rgba(0,0,0,0.2); padding: 20px; transition: 0.3s; overflow-y: auto; z-index: 2000; }
+#panelCesta h2 { margin-bottom: 15px; color: #2f7d32; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+#listaCesta { list-style: none; }
+#listaCesta li { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+#listaCesta li button { background: #e53935; color: white; border: none; border-radius: 4px; padding: 3px 8px; cursor: pointer; font-size: 0.8rem; }
+#total-cesta { font-weight: bold; font-size: 1.1rem; color: #2f7d32; margin-top: 15px; }
+#btn-cerrar-cesta { margin-top: 15px; width: 100%; padding: 10px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem; }
+
+/* Pagina tienda (productos.html) */
+.shop-hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('../Fase2/img/fondo-granja.png') center/cover; height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; }
+.shop-hero h1 { font-size: 2.5rem; margin-bottom: 8px; }
+.container { max-width: 1200px; margin: auto; padding: 40px 20px; }
+.section-title { font-size: 1.7rem; color: #1b5e20; margin: 30px 0 20px; border-left: 5px solid #ff9800; padding-left: 15px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-bottom: 50px; }
+.card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.3s; }
+.card:hover { transform: translateY(-6px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+.card img { width: 100%; height: 210px; object-fit: cover; }
+.card-body { padding: 18px; }
+.card-body h3 { margin-bottom: 6px; font-size: 1.1rem; }
+.card-body p { color: #777; font-size: 0.88rem; margin-bottom: 12px; }
+.price-row { display: flex; justify-content: space-between; align-items: center; }
+.btn-buy { background: #ff9800; border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+.btn-buy:hover { background: #e68a00; }
+
+/* Formulario login */
+body.pagina-login { background: #f0f4f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.login-box { background: #fff; border-radius: 15px; padding: 40px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+.logo { text-align: center; margin-bottom: 25px; }
+.logo h1 { color: #2f7d32; font-size: 1.8rem; }
+.logo p { color: #666; font-size: 0.9rem; }
+.tabs { display: flex; margin-bottom: 25px; border-bottom: 2px solid #eee; }
+.tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; color: #999; transition: color 0.3s; }
+.tab.activo { color: #2f7d32; border-bottom: 3px solid #2f7d32; margin-bottom: -2px; }
+.formulario { display: none; }
+.formulario.activo { display: block; }
+.form-grupo { margin-bottom: 15px; }
+.form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 0.9rem; }
+.form-grupo input { width: 100%; padding: 11px 14px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.3s; outline: none; }
+.form-grupo input:focus { border-color: #2f7d32; }
+.form-grupo input.error { border-color: #f44336; }
+.form-grupo input.ok { border-color: #4caf50; }
+.msg-error { color: #e53935; font-size: 0.8rem; margin-top: 4px; display: none; }
+.msg-error.visible { display: block; }
+.alerta { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: bold; display: none; text-align: center; font-size: 0.9rem; }
+.alerta.exito { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; display: block; }
+.alerta.fallo { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; display: block; }
+.btn-submit { width: 100%; padding: 13px; background: #2f7d32; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 5px; }
+.btn-submit:hover { background: #1b5e20; }
+.volver { text-align: center; margin-top: 20px; }
+.volver a { color: #2f7d32; text-decoration: none; font-size: 0.9rem; }
+.volver a:hover { text-decoration: underline; }
+
+@media (max-width: 850px) { .product-grid { grid-template-columns: 1fr; max-width: 500px; } }
