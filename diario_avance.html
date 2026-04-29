@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Diario de Avance - Campo Fresco</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { background: #f4f6f4; color: #333; }
+
+header {
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
+    padding: 40px;
+    color: #fff;
+    text-align: center;
+}
+header h1 { font-size: 2.2rem; margin-bottom: 10px; }
+header p { opacity: 0.85; font-size: 1rem; }
+
+.container { max-width: 900px; margin: 40px auto; padding: 0 20px 60px; }
+
+/* Línea de tiempo */
+.timeline { position: relative; padding-left: 40px; }
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #2f7d32, #ff9800);
+    border-radius: 3px;
+}
+
+.semana {
+    position: relative;
+    margin-bottom: 40px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 25px 28px;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.07);
+    border-left: 4px solid #2f7d32;
+}
+.semana:nth-child(2n) { border-left-color: #ff9800; }
+.semana:nth-child(3n) { border-left-color: #1976d2; }
+
+.semana::before {
+    content: '';
+    position: absolute;
+    left: -51px;
+    top: 22px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #2f7d32;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.semana:nth-child(2n)::before { background: #ff9800; }
+.semana:nth-child(3n)::before { background: #1976d2; }
+
+.semana-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+.semana-num { font-size: 0.78rem; font-weight: bold; color: #fff; background: #2f7d32; padding: 4px 12px; border-radius: 20px; }
+.semana:nth-child(2n) .semana-num { background: #ff9800; }
+.semana:nth-child(3n) .semana-num { background: #1976d2; }
+
+.semana h2 { font-size: 1.25rem; color: #1b5e20; margin-bottom: 4px; }
+.semana-fecha { font-size: 0.82rem; color: #aaa; }
+
+.horas { display: inline-flex; align-items: center; gap: 5px; background: #f5f5f5; padding: 5px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; color: #555; margin-bottom: 14px; }
+
+.descripcion { color: #555; font-size: 0.92rem; line-height: 1.7; margin-bottom: 16px; }
+
+.mejoras { margin-top: 14px; }
+.mejoras h4 { font-size: 0.88rem; font-weight: bold; color: #333; margin-bottom: 8px; }
+.mejoras ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.mejoras ul li { display: flex; align-items: flex-start; gap: 8px; font-size: 0.88rem; color: #555; }
+.mejoras ul li::before { content: '✓'; color: #4caf50; font-weight: bold; flex-shrink: 0; margin-top: 1px; }
+
+.problemas { margin-top: 14px; background: #fff8e1; border-radius: 8px; padding: 14px 16px; border-left: 3px solid #ffc107; }
+.problemas h4 { font-size: 0.86rem; font-weight: bold; color: #f57f17; margin-bottom: 6px; }
+.problemas p { font-size: 0.86rem; color: #666; line-height: 1.6; }
+
+.estado { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+.estado-ok { background: #e8f5e9; color: #2e7d32; }
+.estado-prog { background: #e3f2fd; color: #1565c0; }
+
+/* Tabla resumen */
+.tabla-horas { background: #fff; border-radius: 14px; padding: 28px; box-shadow: 0 3px 14px rgba(0,0,0,0.07); margin-bottom: 35px; }
+.tabla-horas h3 { font-size: 1.2rem; color: #1b5e20; margin-bottom: 18px; border-bottom: 2px solid #ff9800; padding-bottom: 8px; }
+table { width: 100%; border-collapse: collapse; }
+thead { background: #f5f5f5; }
+thead th { padding: 10px 14px; text-align: left; font-size: 0.85rem; color: #555; }
+tbody td { padding: 11px 14px; font-size: 0.87rem; border-bottom: 1px solid #f0f0f0; }
+tbody tr:last-child td { border-bottom: none; font-weight: bold; background: #f9fdf9; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.dot-verde { background: #4caf50; }
+.dot-naranja { background: #ff9800; }
+.dot-azul { background: #2196f3; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>📋 Diario de Avance del Proyecto</h1>
+    <p>Campo Fresco — Tienda Ecológica Online &nbsp;|&nbsp; iMES &nbsp;|&nbsp; Alex Valls &nbsp;|&nbsp; 2025-2026</p>
+</header>
+
+<div class="container">
+
+    <!-- Tabla resumen de horas -->
+    <div class="tabla-horas">
+        <h3>⏱ Resumen de Horas por Semana</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Semana / Fase</th>
+                    <th>Tarea Principal</th>
+                    <th>Horas estimadas</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="dot dot-verde"></span>Semana 1 — Fase 1</td>
+                    <td>Estructura base HTML, diseño inicial, carrito con alert()</td>
+                    <td>~5h</td>
+                    <td><span class="estado estado-ok">✓ Completada</span></td>
+                </tr>
+                <tr>
+                    <td><span class="dot dot-verde"></span>Semana 2 — Fase 2</td>
+                    <td>Más productos, CSS con variables, carrito con localStorage</td>
+                    <td>~6h</td>
+                    <td><span class="estado estado-ok">✓ Completada</span></td>
+                </tr>
+                <tr>
+                    <td><span class="dot dot-verde"></span>Semana 3 — Fase 3</td>
+                    <td>Login/Registro real, validaciones de formularios, mensajes</td>
+                    <td>~7h</td>
+                    <td><span class="estado estado-ok">✓ Completada</span></td>
+                </tr>
+                <tr>
+                    <td><span class="dot dot-verde"></span>Semana 4 — Fase 4</td>
+                    <td>Panel de admin, CRUD de productos, confirmación al borrar</td>
+                    <td>~8h</td>
+                    <td><span class="estado estado-ok">✓ Completada</span></td>
+                </tr>
+                <tr>
+                    <td><span class="dot dot-verde"></span>Semana 5 — Fase 5</td>
+                    <td>Sidebar, filtros de categoría, validaciones mejoradas</td>
+                    <td>~7h</td>
+                    <td><span class="estado estado-ok">✓ Completada</span></td>
+                </tr>
+                <tr>
+                    <td><span class="dot dot-naranja"></span>Semana 6 — Fase 6 (Final)</td>
+                    <td>Modal confirmación propio, toasts, diseño final + sistema de backup completo (scripts BAT, hash SHA256, Task Scheduler, prueba restauración)</td>
+                    <td>~10h</td>
+                    <td><span class="estado estado-ok">✓ Completada</span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>TOTAL</strong></td>
+                    <td><strong>~43 horas</strong></td>
+                    <td><span class="estado estado-ok">✓ Finalizado</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Línea de tiempo -->
+    <div class="timeline">
+
+        <!-- SEMANA 1 -->
+        <div class="semana">
+            <div class="semana-header">
+                <div>
+                    <span class="semana-num">Semana 1 · Fase 1</span>
+                    <h2 style="margin-top:8px;">Primera versión de la web</h2>
+                    <span class="semana-fecha">📅 Febrero 2026</span>
+                </div>
+                <span class="estado estado-ok">✓ Completada</span>
+            </div>
+            <div class="horas">⏱ ~5 horas dedicadas</div>
+            <p class="descripcion">
+                Esta semana empezamos el proyecto desde cero. La idea era hacer una tienda de productos ecológicos y lo primero que hicimos fue montar la estructura HTML básica con un header, una sección hero con imagen de fondo, y una cuadrícula de 4 productos. El diseño usa colores verdes porque es una tienda ecológica. Añadimos también un modal de registro muy simple (solo con un checkbox CSS para mostrarlo/ocultarlo) y un buscador que abre una previsualización del producto.
+            </p>
+            <div class="mejoras">
+                <h4>Lo que funciona en esta fase:</h4>
+                <ul>
+                    <li>Página principal con hero, características y productos</li>
+                    <li>Modal de registro con HTML/CSS puro (sin JavaScript para el toggle)</li>
+                    <li>Buscador básico que muestra el producto encontrado</li>
+                    <li>Preview de producto al hacer clic en la imagen</li>
+                    <li>Carrito funciona con alert() (muy básico)</li>
+                    <li>Diseño responsive básico con media queries</li>
+                </ul>
+            </div>
+            <div class="problemas">
+                <h4>⚠ Problemas / cosas a mejorar:</h4>
+                <p>El carrito no guarda nada, solo hace alert(). El registro no guarda ningún usuario. Los productos están escritos directamente en el HTML (hardcoded). No hay página de tienda separada.</p>
+            </div>
+        </div>
+
+        <!-- SEMANA 2 -->
+        <div class="semana">
+            <div class="semana-header">
+                <div>
+                    <span class="semana-num">Semana 2 · Fase 2</span>
+                    <h2 style="margin-top:8px;">Más productos y carrito con localStorage</h2>
+                    <span class="semana-fecha">📅 Febrero 2026</span>
+                </div>
+                <span class="estado estado-ok">✓ Completada</span>
+            </div>
+            <div class="horas">⏱ ~6 horas dedicadas</div>
+            <p class="descripcion">
+                Esta semana mejoramos bastante el proyecto. Creamos una segunda página (productos.html) que hace de tienda completa con todos los productos divididos en categorías: frutas, verduras y básicos. El carrito ahora funciona de verdad: guarda los productos en localStorage y tiene un panel lateral que se abre cuando haces clic en el icono de la cesta. También mejoramos el CSS usando variables CSS y añadimos más imágenes de productos.
+            </p>
+            <div class="mejoras">
+                <h4>Mejoras respecto a la Fase 1:</h4>
+                <ul>
+                    <li>Nueva página tienda (productos.html) con categorías</li>
+                    <li>10 productos en total con sus imágenes</li>
+                    <li>Carrito lateral que se desliza, con localStorage</li>
+                    <li>Contador de artículos en el carrito</li>
+                    <li>CSS con variables (:root) más organizado</li>
+                    <li>Hover animado en las tarjetas de producto</li>
+                    <li>Pueden eliminar artículos del carrito individualmente</li>
+                </ul>
+            </div>
+            <div class="problemas">
+                <h4>⚠ Problemas / cosas a mejorar:</h4>
+                <p>El login sigue siendo decorativo, no guarda usuarios reales. No hay validaciones en los formularios. Los productos siguen hardcodeados en HTML. No hay panel de administración.</p>
+            </div>
+        </div>
+
+        <!-- SEMANA 3 -->
+        <div class="semana">
+            <div class="semana-header">
+                <div>
+                    <span class="semana-num">Semana 3 · Fase 3</span>
+                    <h2 style="margin-top:8px;">Login y registro real con validaciones</h2>
+                    <span class="semana-fecha">📅 Marzo 2026</span>
+                </div>
+                <span class="estado estado-ok">✓ Completada</span>
+            </div>
+            <div class="horas">⏱ ~7 horas dedicadas</div>
+            <p class="descripcion">
+                Semana muy importante porque implementamos el sistema de login y registro de verdad. Creamos una página login.html separada con dos pestañas: una para iniciar sesión y otra para crear una cuenta nueva. Los usuarios se guardan en localStorage como un array de objetos. Cuando alguien se registra, se guarda su nombre, email y contraseña. Al iniciar sesión se comprueba si el email y contraseña coinciden. También añadimos mensajes de error que aparecen debajo de cada campo en rojo cuando hay un error.
+            </p>
+            <div class="mejoras">
+                <h4>Mejoras respecto a la Fase 2:</h4>
+                <ul>
+                    <li>Página login.html con login y registro en pestañas</li>
+                    <li>Usuarios guardados en localStorage</li>
+                    <li>Validación de email (formato), contraseña (mínimo 6 caracteres)</li>
+                    <li>Comprobación de que las contraseñas coinciden</li>
+                    <li>Mensajes de error en rojo bajo cada campo</li>
+                    <li>Mensajes de éxito en verde (registro correcto, bienvenida)</li>
+                    <li>El header muestra "Hola, [nombre]" si hay sesión activa</li>
+                    <li>Botón de cerrar sesión</li>
+                    <li>Barra de bienvenida al iniciar sesión</li>
+                </ul>
+            </div>
+            <div class="problemas">
+                <h4>⚠ Problemas / cosas a mejorar:</h4>
+                <p>Las contraseñas se guardan en texto plano en localStorage (no es seguro, pero no tenemos servidor). No hay panel de admin. Los productos siguen siendo estáticos en el HTML.</p>
+            </div>
+        </div>
+
+        <!-- SEMANA 4 -->
+        <div class="semana">
+            <div class="semana-header">
+                <div>
+                    <span class="semana-num">Semana 4 · Fase 4</span>
+                    <h2 style="margin-top:8px;">Panel de Admin y CRUD de productos</h2>
+                    <span class="semana-fecha">📅 Marzo 2026</span>
+                </div>
+                <span class="estado estado-ok">✓ Completada</span>
+            </div>
+            <div class="horas">⏱ ~8 horas dedicadas</div>
+            <p class="descripcion">
+                Esta semana fue la más difícil hasta ahora. Creamos el panel de administración (admin.html) donde se pueden gestionar los productos: añadir nuevos, editar los existentes y eliminarlos. Los productos se guardan ahora en localStorage como un array, y tanto la página de inicio como la tienda los cargan dinámicamente con JavaScript. Al eliminar un producto, aparece un confirm() del navegador para confirmar antes de borrarlo. El formulario del admin tiene validaciones completas.
+            </p>
+            <div class="mejoras">
+                <h4>Mejoras respecto a la Fase 3:</h4>
+                <ul>
+                    <li>Panel de administración completo (admin.html)</li>
+                    <li>CRUD completo: Crear, Leer, Actualizar y Eliminar productos</li>
+                    <li>Tabla de productos con imagen, nombre, precio y categoría</li>
+                    <li>Formulario para añadir/editar con validaciones</li>
+                    <li>Confirmación antes de eliminar (confirm() nativo)</li>
+                    <li>Los productos se cargan dinámicamente desde localStorage</li>
+                    <li>Enlace al admin visible solo si hay sesión activa</li>
+                    <li>Mensajes de éxito al guardar o eliminar</li>
+                </ul>
+            </div>
+            <div class="problemas">
+                <h4>⚠ Problemas / cosas a mejorar:</h4>
+                <p>El confirm() nativo del navegador es feo y no se puede personalizar. La navegación es horizontal, queríamos hacer un sidebar. Los mensajes de éxito son solo un div que aparece y desaparece, no hay notificaciones bonitas.</p>
+            </div>
+        </div>
+
+        <!-- SEMANA 5 -->
+        <div class="semana">
+            <div class="semana-header">
+                <div>
+                    <span class="semana-num">Semana 5 · Fase 5</span>
+                    <h2 style="margin-top:8px;">Sidebar y filtros por categoría</h2>
+                    <span class="semana-fecha">📅 Abril 2026</span>
+                </div>
+                <span class="estado estado-ok">✓ Completada</span>
+            </div>
+            <div class="horas">⏱ ~7 horas dedicadas</div>
+            <p class="descripcion">
+                Semana de rediseño. Lo más gordo fue cambiar el menú horizontal de arriba por un sidebar vertical a la izquierda, que queda más profesional. Tuvimos que cambiar el layout de toda la web usando flexbox (body con display:flex, sidebar fijo y main-content con margin-left). También añadimos filtros de categoría en la tienda: botones de "Todos", "Frutas", "Verduras" y "Básicos" que filtran los productos en tiempo real sin recargar la página. El buscador también funciona en tiempo real ahora.
+            </p>
+            <div class="mejoras">
+                <h4>Mejoras respecto a la Fase 4:</h4>
+                <ul>
+                    <li>Sidebar lateral en todas las páginas del proyecto</li>
+                    <li>Logo de la tienda en el sidebar</li>
+                    <li>Info del usuario logueado en la parte inferior del sidebar</li>
+                    <li>Filtros de categoría en la tienda (en tiempo real)</li>
+                    <li>Buscador en tiempo real (mientras escribes)</li>
+                    <li>Validaciones visuales mejoradas con box-shadow rojo/verde</li>
+                    <li>Admin con sidebar también, diseño más limpio</li>
+                    <li>Responsive: sidebar se oculta en pantallas pequeñas</li>
+                </ul>
+            </div>
+            <div class="problemas">
+                <h4>⚠ Problemas / cosas a mejorar:</h4>
+                <p>El confirm() de eliminar sigue siendo el nativo del navegador. Queremos hacer un modal propio más bonito. Los alert() de añadir al carrito también hay que sustituirlos por notificaciones más elegantes.</p>
+            </div>
+        </div>
+
+        <!-- SEMANA 6 - FINAL -->
+        <div class="semana">
+            <div class="semana-header">
+                <div>
+                    <span class="semana-num">Semana 6 · Fase 6 — FINAL</span>
+                    <h2 style="margin-top:8px;">Versión final + Sistema de Copias de Seguridad</h2>
+                    <span class="semana-fecha">📅 Abril 2026</span>
+                </div>
+                <span class="estado estado-ok">✓ Completada</span>
+            </div>
+            <div class="horas">⏱ ~10 horas dedicadas (5h web + 5h sistemas)</div>
+            <p class="descripcion">
+                Última semana: dos partes bien diferenciadas. Por el lado de la web, pulimos todo y añadimos las mejoras finales: eliminamos todos los confirm() y alert() nativos y los sustituimos por un modal de confirmación personalizado y un sistema de notificaciones toast. Por el lado de sistemas, diseñamos e implementamos el sistema de copias de seguridad completo: tres scripts .bat (backup, restaurar y verificar), configuración del Task Scheduler para que se ejecute automáticamente cada noche, y prueba de restauración completa para demostrar que funciona.
+            </p>
+            <div class="mejoras">
+                <h4>Mejoras web (Fase 6 vs Fase 5):</h4>
+                <ul>
+                    <li>Modal de confirmación propio para eliminar (sin confirm() nativo)</li>
+                    <li>Sistema de notificaciones toast (sin alert())</li>
+                    <li>Login con diseño mejorado y fondo degradado</li>
+                    <li>Validaciones con regex de email más estricta</li>
+                    <li>Feedback visual positivo (borde verde) en campos correctos</li>
+                    <li>Botón "Vaciar cesta" en el panel de la cesta</li>
+                    <li>Sidebar con indicador de página activa</li>
+                </ul>
+            </div>
+            <div class="mejoras" style="margin-top:12px;">
+                <h4>Sistema de backup (parte de Sistemas):</h4>
+                <ul>
+                    <li>Análisis de qué datos son críticos en nuestro proyecto concreto</li>
+                    <li>Script backup.bat: comprime proyecto en ZIP + exporta BD con mysqldump + genera hash SHA256 + log</li>
+                    <li>Script restaurar.bat: verifica integridad antes de restaurar, extrae ZIP, restaura BD</li>
+                    <li>Script verificar_backup.bat: comprueba hash SHA256 de cualquier backup</li>
+                    <li>Eliminación automática de backups con más de 7 días (forfiles)</li>
+                    <li>Task Scheduler configurado para ejecutar backup automático a las 23:00h</li>
+                    <li>Prueba de restauración completa superada con éxito</li>
+                </ul>
+            </div>
+            <div class="problemas" style="background:#e8f5e9; border-left-color: #4caf50;">
+                <h4 style="color:#2e7d32;">✅ Conclusión final:</h4>
+                <p>El proyecto cumple todos los requisitos: login y registro, CRUD completo, confirmación antes de eliminar, formularios con validación, mensajes de error y éxito, menú lateral, página moderna, sistema de backup con automatización y verificación de integridad. Documentación y Kanban completos.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

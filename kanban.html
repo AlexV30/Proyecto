@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kanban — Campo Fresco</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { background: #e4ebe4; min-height: 100vh; }
+
+/* Header */
+header { background: linear-gradient(135deg, #1b5e20, #2e7d32); padding: 20px 30px; color: #fff; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+header h1 { font-size: 1.4rem; margin-bottom: 3px; }
+header p { font-size: 0.83rem; opacity: 0.75; }
+.header-links a { color: #ff9800; text-decoration: none; font-size: 0.85rem; margin-left: 16px; }
+.header-links a:hover { text-decoration: underline; }
+
+/* Tabla de resumen de horas */
+.resumen-horas {
+    max-width: 1100px;
+    margin: 24px auto 0;
+    padding: 0 20px;
+}
+.resumen-horas table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    font-size: 0.85rem;
+}
+.resumen-horas thead { background: #1b5e20; color: #fff; }
+.resumen-horas thead th { padding: 11px 16px; text-align: left; }
+.resumen-horas tbody td { padding: 9px 16px; border-bottom: 1px solid #f0f0f0; }
+.resumen-horas tbody tr:last-child td { border-bottom: none; font-weight: bold; background: #f9fdf9; }
+.resumen-horas h2 { color: #1b5e20; margin-bottom: 12px; font-size: 1rem; padding-left: 4px; border-left: 4px solid #ff9800; padding-left: 10px; }
+
+/* Leyenda */
+.leyenda {
+    max-width: 1100px; margin: 16px auto 0; padding: 0 20px;
+    display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+}
+.leyenda-titulo { font-weight: bold; color: #555; font-size: 0.82rem; }
+.leyenda-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #555; }
+.dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+
+/* Tablero */
+.tablero {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    max-width: 1100px;
+    margin: 16px auto 30px;
+    padding: 0 20px;
+}
+
+/* Columnas */
+.columna {
+    background: rgba(255,255,255,0.55);
+    border-radius: 14px;
+    padding: 16px;
+    min-height: 400px;
+}
+.col-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+    border-bottom: 3px solid;
+}
+.col-pend .col-header { border-color: #bdbdbd; }
+.col-proc .col-header { border-color: #1976d2; }
+.col-fet  .col-header { border-color: #2e7d32; }
+
+.col-header h2 { font-size: 0.95rem; }
+.col-pend .col-header h2 { color: #757575; }
+.col-proc .col-header h2 { color: #1565c0; }
+.col-fet  .col-header h2 { color: #1b5e20; }
+
+.badge-n { font-size: 0.75rem; font-weight: bold; color: #fff; padding: 3px 10px; border-radius: 20px; }
+.col-pend .badge-n { background: #9e9e9e; }
+.col-proc .badge-n { background: #1976d2; }
+.col-fet  .badge-n { background: #2e7d32; }
+
+/* Grupo de semana */
+.grupo-semana { margin-top: 10px; margin-bottom: 4px; }
+.grupo-semana span {
+    font-size: 0.7rem; font-weight: bold; text-transform: uppercase;
+    letter-spacing: 0.6px; color: #aaa; background: rgba(0,0,0,0.04);
+    padding: 3px 10px; border-radius: 4px;
+}
+
+/* Tarjeta */
+.tarjeta {
+    background: #fff;
+    border-radius: 9px;
+    padding: 12px 14px;
+    margin-bottom: 9px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    border-left: 4px solid #ddd;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.tarjeta:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+.tarjeta.web     { border-left-color: #2e7d32; }
+.tarjeta.sistemas{ border-left-color: #1976d2; }
+.tarjeta.doc     { border-left-color: #ff9800; }
+.tarjeta.git     { border-left-color: #7b1fa2; }
+
+.tarjeta-titulo { font-size: 0.86rem; font-weight: 600; color: #333; margin-bottom: 8px; line-height: 1.4; }
+
+.tarjeta-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+.chip { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.chip-web  { background: #e8f5e9; color: #1b5e20; }
+.chip-sis  { background: #e3f2fd; color: #1565c0; }
+.chip-doc  { background: #fff3e0; color: #e65100; }
+.chip-git  { background: #f3e5f5; color: #7b1fa2; }
+.chip-h    { background: #f5f5f5; color: #555; }
+.chip-p1   { background: #fce4ec; color: #880e4f; }
+.chip-p2   { background: #e0f7fa; color: #00695c; }
+.chip-pb   { background: #f9fbe7; color: #558b2f; }
+
+.vacio { color: #ccc; text-align: center; padding: 30px 10px; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>📋 Tablero Kanban — Campo Fresco</h1>
+        <p>Projecte Intermodular 2025-2026 &nbsp;|&nbsp; iMES &nbsp;|&nbsp; Alex Valls</p>
+    </div>
+    <div class="header-links">
+        <a href="Fase6/index.html">← Tienda</a>
+        <a href="documentacion.html">📄 Documentación</a>
+        <a href="diario_avance.html">📋 Diario</a>
+    </div>
+</header>
+
+<!-- Tabla resumen de horas -->
+<div class="resumen-horas">
+    <h2 style="margin-top:0;">⏱ Registro de horas por semana</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Semana / Fase</th>
+                <th>Tarea principal</th>
+                <th>Alumno 1</th>
+                <th>Alumno 2</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Semana 1 — Fase 1</td>
+                <td>Estructura HTML y CSS base, primeros productos</td>
+                <td>3h</td><td>2h</td><td><strong>5h</strong></td>
+            </tr>
+            <tr>
+                <td>Semana 2 — Fase 2</td>
+                <td>Tienda completa, carrito con localStorage</td>
+                <td>3h</td><td>3h</td><td><strong>6h</strong></td>
+            </tr>
+            <tr>
+                <td>Semana 3 — Fase 3</td>
+                <td>Login/registro con validaciones, mensajes de error</td>
+                <td>4h</td><td>3h</td><td><strong>7h</strong></td>
+            </tr>
+            <tr>
+                <td>Semana 4 — Fase 4</td>
+                <td>Panel admin, CRUD de productos, confirmación borrar</td>
+                <td>4h</td><td>4h</td><td><strong>8h</strong></td>
+            </tr>
+            <tr>
+                <td>Semana 5 — Fase 5</td>
+                <td>Sidebar, filtros categoría, buscador en tiempo real</td>
+                <td>3.5h</td><td>3.5h</td><td><strong>7h</strong></td>
+            </tr>
+            <tr>
+                <td>Semana 6 — Fase 6 + Sistemas</td>
+                <td>Versión final + sistema de backup completo</td>
+                <td>5h</td><td>5h</td><td><strong>10h</strong></td>
+            </tr>
+            <tr>
+                <td colspan="4"><strong>TOTAL HORAS</strong></td>
+                <td><strong>43 horas</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Leyenda -->
+<div class="leyenda">
+    <span class="leyenda-titulo">Módulo:</span>
+    <div class="leyenda-item"><div class="dot" style="background:#2e7d32;"></div> Desarrollo Web</div>
+    <div class="leyenda-item"><div class="dot" style="background:#1976d2;"></div> Sistemas / Backup</div>
+    <div class="leyenda-item"><div class="dot" style="background:#ff9800;"></div> Documentación</div>
+    <div class="leyenda-item"><div class="dot" style="background:#7b1fa2;"></div> GitHub</div>
+    &nbsp;&nbsp;
+    <span class="leyenda-titulo">Responsable:</span>
+    <div class="leyenda-item"><div class="dot" style="background:#e91e63;border-radius:50%;"></div> Alumno 1</div>
+    <div class="leyenda-item"><div class="dot" style="background:#00bcd4;border-radius:50%;"></div> Alumno 2</div>
+    <div class="leyenda-item"><div class="dot" style="background:#8bc34a;border-radius:50%;"></div> Ambos</div>
+</div>
+
+<!-- Tablero -->
+<div class="tablero">
+
+    <!-- === PENDIENTE === -->
+    <div class="columna col-pend">
+        <div class="col-header">
+            <h2>⏳ Pendiente</h2>
+            <span class="badge-n">0</span>
+        </div>
+        <div class="vacio">¡Todo completado! 🎉</div>
+    </div>
+
+    <!-- === EN PROCESO === -->
+    <div class="columna col-proc">
+        <div class="col-header">
+            <h2>🔄 En Proceso</h2>
+            <span class="badge-n">0</span>
+        </div>
+        <div class="vacio">Sin tareas activas ahora mismo.</div>
+    </div>
+
+    <!-- === HECHO === -->
+    <div class="columna col-fet">
+        <div class="col-header">
+            <h2>✅ Fet / Hecho</h2>
+            <span class="badge-n">26</span>
+        </div>
+
+        <!-- Semana 1 -->
+        <div class="grupo-semana"><span>Semana 1 — Fase 1</span></div>
+
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Crear estructura HTML de la página principal (hero, nav, productos)</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">2h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Diseñar CSS base: colores verdes, tipografía, layout básico</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">1.5h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Añadir 4 productos con imagen, precio y botón de carrito</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">1h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta git">
+            <div class="tarjeta-titulo">Configurar repositorio GitHub y subir primera versión del proyecto</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-git">GitHub</span>
+                <span class="chip chip-h">0.5h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+
+        <!-- Semana 2 -->
+        <div class="grupo-semana"><span>Semana 2 — Fase 2</span></div>
+
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Crear página productos.html con 10 productos divididos en categorías</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">3h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Implementar carrito lateral con localStorage (añadir, eliminar, total)</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">2.5h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta git">
+            <div class="tarjeta-titulo">Commit: "feat: tienda completa y carrito con localStorage"</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-git">GitHub</span>
+                <span class="chip chip-h">0.5h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+
+        <!-- Semana 3 -->
+        <div class="grupo-semana"><span>Semana 3 — Fase 3</span></div>
+
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Crear login.html con pestañas (iniciar sesión / crear cuenta)</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">3h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Implementar validaciones: formato email, contraseña min. 6 chars, passwords coinciden</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">2h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Guardar/verificar usuarios en localStorage, sesión activa en header</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">2h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta git">
+            <div class="tarjeta-titulo">Commit: "feat: login y registro funcionales con validaciones"</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-git">GitHub</span>
+                <span class="chip chip-h">0.5h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+
+        <!-- Semana 4 -->
+        <div class="grupo-semana"><span>Semana 4 — Fase 4</span></div>
+
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Crear admin.html: tabla de productos, formulario añadir/editar</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">3h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Implementar CRUD: guardar, editar (form pre-rellenado) y eliminar productos</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">3h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Añadir confirmación con confirm() antes de eliminar un producto</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">0.5h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Cargar productos dinámicamente desde localStorage en index y tienda</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">1h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta git">
+            <div class="tarjeta-titulo">Commit: "feat: panel admin con CRUD completo de productos"</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-git">GitHub</span>
+                <span class="chip chip-h">0.5h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+
+        <!-- Semana 5 -->
+        <div class="grupo-semana"><span>Semana 5 — Fase 5</span></div>
+
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Rediseñar layout con sidebar vertical fijo en todas las páginas (flexbox)</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">3h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Añadir filtros de categoría y buscador en tiempo real en la tienda</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">2h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta git">
+            <div class="tarjeta-titulo">Commit: "feat: sidebar y filtros categoria en tiempo real"</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-git">GitHub</span>
+                <span class="chip chip-h">0.5h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+
+        <!-- Semana 6 -->
+        <div class="grupo-semana"><span>Semana 6 — Fase Final + Sistemas</span></div>
+
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Sustituir confirm() por modal de confirmación personalizado en admin</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">2h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta web">
+            <div class="tarjeta-titulo">Implementar sistema de notificaciones toast (reemplaza alert())</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-web">Web</span>
+                <span class="chip chip-h">1.5h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta sistemas">
+            <div class="tarjeta-titulo">Analizar el proyecto: qué datos son críticos, riesgos y frecuencia de backup</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-sis">Sistemas</span>
+                <span class="chip chip-h">1h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+        <div class="tarjeta sistemas">
+            <div class="tarjeta-titulo">Crear backup.bat: ZIP del proyecto + mysqldump + hash SHA256 + log</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-sis">Sistemas</span>
+                <span class="chip chip-h">2h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta sistemas">
+            <div class="tarjeta-titulo">Crear restaurar.bat con verificación de integridad antes de restaurar</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-sis">Sistemas</span>
+                <span class="chip chip-h">1.5h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta sistemas">
+            <div class="tarjeta-titulo">Crear verificar_backup.bat para comprobar hash SHA256 de cualquier backup</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-sis">Sistemas</span>
+                <span class="chip chip-h">1h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta sistemas">
+            <div class="tarjeta-titulo">Configurar Task Scheduler de Windows para ejecutar backup automático diario (23:00h)</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-sis">Sistemas</span>
+                <span class="chip chip-h">0.5h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+        <div class="tarjeta sistemas">
+            <div class="tarjeta-titulo">Prueba de restauración completa: borrar proyecto y restaurar desde backup</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-sis">Sistemas</span>
+                <span class="chip chip-h">1h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+        <div class="tarjeta doc">
+            <div class="tarjeta-titulo">Redactar documentación: portada, índice, introducción, análisis y desarrollo</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-doc">Docs</span>
+                <span class="chip chip-h">2h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+        <div class="tarjeta doc">
+            <div class="tarjeta-titulo">Redactar sección de sistemas en documentación (5 fases del backup)</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-doc">Docs</span>
+                <span class="chip chip-h">1.5h</span>
+                <span class="chip chip-p1">Alumno 1</span>
+            </div>
+        </div>
+        <div class="tarjeta doc">
+            <div class="tarjeta-titulo">Completar diario de avance semanal con horas, mejoras y problemas</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-doc">Docs</span>
+                <span class="chip chip-h">1h</span>
+                <span class="chip chip-p2">Alumno 2</span>
+            </div>
+        </div>
+        <div class="tarjeta git">
+            <div class="tarjeta-titulo">Commit final: "docs: documentacion completa + scripts backup + kanban"</div>
+            <div class="tarjeta-meta">
+                <span class="chip chip-git">GitHub</span>
+                <span class="chip chip-h">0.5h</span>
+                <span class="chip chip-pb">Ambos</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

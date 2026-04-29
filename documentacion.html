@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Documentación — Campo Fresco</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Georgia', serif; color: #222; background: #e8e8e8; font-size: 15px; line-height: 1.7; }
+
+@media print {
+    body { background: #fff; font-size: 12pt; }
+    .no-print { display: none !important; }
+    .pagina { box-shadow: none; margin: 0; border-radius: 0; page-break-after: always; }
+    .pagina:last-child { page-break-after: avoid; }
+}
+
+.barra-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    background: #1b5e20; color: #fff; padding: 10px 25px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Segoe UI', sans-serif; font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.barra-nav a { color: #ff9800; text-decoration: none; margin-right: 18px; }
+.barra-nav a:hover { text-decoration: underline; }
+.barra-nav button { background: #ff9800; border: none; color: #fff; padding: 7px 18px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
+
+.pagina {
+    background: #fff;
+    max-width: 820px;
+    margin: 80px auto 25px;
+    padding: 75px 85px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.15);
+    border-radius: 3px;
+    min-height: 1050px;
+    position: relative;
+}
+
+/* === PORTADA === */
+.portada {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    min-height: 920px;
+}
+.portada-escudo {
+    width: 100px; height: 100px;
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; margin: 0 auto 18px;
+    box-shadow: 0 4px 15px rgba(47,125,50,0.3);
+}
+.portada-centre { font-size: 1rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; color: #444; }
+.portada-cicle { font-size: 0.85rem; color: #888; margin-top: 5px; }
+
+.portada-banda {
+    border-top: 4px solid #2f7d32;
+    border-bottom: 4px solid #2f7d32;
+    padding: 40px 0;
+    margin: 30px 0;
+    width: 100%;
+}
+.portada-banda h1 { font-size: 2.5rem; color: #1b5e20; margin-bottom: 10px; line-height: 1.2; }
+.portada-banda h2 { font-size: 1.1rem; color: #888; font-weight: normal; }
+
+.portada-autores h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; margin-bottom: 12px; }
+.portada-autores p { font-size: 1.05rem; margin-bottom: 4px; font-weight: bold; }
+
+.portada-tabla {
+    width: 100%;
+    border-top: 1px solid #eee;
+    padding-top: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    text-align: left;
+}
+.pt-item label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.8px; color: #bbb; display: block; margin-bottom: 3px; }
+.pt-item span { font-size: 0.92rem; font-weight: bold; color: #333; }
+
+.num-pag { position: absolute; bottom: 28px; right: 55px; font-size: 0.78rem; color: #ccc; font-family: 'Segoe UI', sans-serif; }
+
+/* === CONTENIDO === */
+h1.cap { font-size: 1.55rem; color: #1b5e20; border-bottom: 3px solid #ff9800; padding-bottom: 8px; margin: 28px 0 16px; }
+h2.sub { font-size: 1.05rem; color: #2f7d32; margin: 20px 0 10px; }
+h3.subsub { font-size: 0.95rem; color: #333; margin: 16px 0 8px; font-style: italic; }
+
+p.t { font-size: 0.93rem; line-height: 1.8; color: #444; margin-bottom: 13px; text-align: justify; }
+
+ul.l { list-style: none; margin: 0 0 15px 0; }
+ul.l li { padding: 5px 0 5px 22px; position: relative; font-size: 0.9rem; color: #555; line-height: 1.65; }
+ul.l li::before { content: '›'; position: absolute; left: 0; color: #ff9800; font-weight: bold; font-size: 1.1rem; }
+
+ol.l { margin: 0 0 15px 20px; }
+ol.l li { padding: 4px 0; font-size: 0.9rem; color: #555; line-height: 1.65; }
+
+/* Caja de aviso */
+.aviso { background: #fff8e1; border-left: 4px solid #ffc107; border-radius: 0 8px 8px 0; padding: 13px 16px; margin: 14px 0; font-size: 0.88rem; color: #555; }
+.aviso strong { color: #f57f17; }
+
+.ok-box { background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 0 8px 8px 0; padding: 13px 16px; margin: 14px 0; font-size: 0.88rem; color: #2e7d32; }
+
+/* Tabla genérica */
+.tabla { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.87rem; }
+.tabla thead { background: #2f7d32; color: #fff; }
+.tabla thead th { padding: 10px 14px; text-align: left; }
+.tabla tbody td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; }
+.tabla tbody tr:nth-child(even) { background: #f9f9f9; }
+.tabla tbody tr:last-child td { border-bottom: none; font-weight: bold; }
+
+/* Bloque de código */
+.code-block {
+    background: #1e1e1e; color: #d4d4d4;
+    padding: 16px 18px; border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem; line-height: 1.6;
+    margin: 14px 0; overflow-x: auto;
+    white-space: pre;
+}
+.code-block .verde { color: #6a9955; }
+.code-block .azul { color: #9cdcfe; }
+.code-block .naranja { color: #ce9178; }
+.code-block .amarillo { color: #dcdcaa; }
+
+/* Log de evidencia */
+.log-box {
+    background: #0d0d0d; color: #33ff33;
+    padding: 14px 16px; border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.78rem; line-height: 1.7;
+    margin: 14px 0;
+}
+
+/* Índice */
+.idx { display: flex; justify-content: space-between; align-items: flex-end; padding: 8px 0; border-bottom: 1px dotted #ddd; }
+.idx.n1 { font-weight: bold; color: #1b5e20; font-size: 0.95rem; }
+.idx.n2 { padding-left: 22px; color: #555; font-size: 0.88rem; }
+.idx.n3 { padding-left: 40px; color: #777; font-size: 0.84rem; }
+.idx-pag { color: #bbb; flex-shrink: 0; font-size: 0.82rem; }
+
+/* Badge fase */
+.fase-badge { display: inline-block; background: #2f7d32; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 10px; border-radius: 4px; margin-right: 6px; font-family: 'Segoe UI', sans-serif; }
+</style>
+</head>
+<body>
+
+<div class="barra-nav no-print">
+    <div>
+        <a href="Fase6/index.html">← Volver a la tienda</a>
+        <a href="diario_avance.html">📋 Diario de Avance</a>
+        <a href="kanban.html">📌 Kanban</a>
+    </div>
+    <button onclick="window.print()">🖨 Exportar PDF</button>
+</div>
+
+<!-- ============================= PORTADA ============================= -->
+<div class="pagina portada">
+    <div>
+        <div class="portada-escudo">🌿</div>
+        <div class="portada-centre">iMES</div>
+        <div class="portada-cicle">CFGM Sistemes Microinformàtics i Xarxes</div>
+    </div>
+
+    <div class="portada-banda">
+        <h1>Campo Fresco</h1>
+        <h1 style="font-size:1.7rem;margin-bottom:18px;">Tienda Ecológica Online</h1>
+        <h2>Projecte Intermodular — Desenvolupament Web i Sistemes</h2>
+    </div>
+
+    <div class="portada-autores">
+        <h3>Autor del Proyecto</h3>
+        <p>Alex Valls</p>
+    </div>
+
+    <div class="portada-tabla">
+        <div class="pt-item"><label>Centre</label><span>iMES</span></div>
+        <div class="pt-item"><label>Cicle Formatiu</label><span>CFGM SMX</span></div>
+        <div class="pt-item"><label>Mòdul</label><span>Projecte Intermodular</span></div>
+        <div class="pt-item"><label>Repositori GitHub</label><span>github.com/AlexV30/Proyecto</span></div>
+        <div class="pt-item"><label>Data de lliurament</label><span>Maig 2026</span></div>
+        <div class="pt-item"><label>Curs acadèmic</label><span>2025 — 2026</span></div>
+    </div>
+</div>
+
+<!-- ============================= ÍNDICE ============================= -->
+<div class="pagina">
+    <h1 class="cap">Índice</h1>
+
+    <div class="idx n1"><span>1. Introducción</span><span class="idx-pag">3</span></div>
+    <div class="idx n2"><span>1.1 Descripción del proyecto</span><span class="idx-pag">3</span></div>
+    <div class="idx n2"><span>1.2 Objetivos</span><span class="idx-pag">3</span></div>
+    <div class="idx n2"><span>1.3 Tecnologías utilizadas</span><span class="idx-pag">3</span></div>
+
+    <div class="idx n1" style="margin-top:8px;"><span>2. Análisis y Requisitos</span><span class="idx-pag">4</span></div>
+    <div class="idx n2"><span>2.1 Requisitos funcionales de la web</span><span class="idx-pag">4</span></div>
+    <div class="idx n2"><span>2.2 Estructura de la aplicación</span><span class="idx-pag">4</span></div>
+    <div class="idx n2"><span>2.3 Flujo de la aplicación</span><span class="idx-pag">4</span></div>
+
+    <div class="idx n1" style="margin-top:8px;"><span>3. Desarrollo por Fases</span><span class="idx-pag">5</span></div>
+    <div class="idx n2"><span>3.1 Fase 1 — Estructura base</span><span class="idx-pag">5</span></div>
+    <div class="idx n2"><span>3.2 Fase 2 — Carrito con localStorage</span><span class="idx-pag">5</span></div>
+    <div class="idx n2"><span>3.3 Fase 3 — Login y registro real</span><span class="idx-pag">5</span></div>
+    <div class="idx n2"><span>3.4 Fase 4 — CRUD y panel de administración</span><span class="idx-pag">5</span></div>
+    <div class="idx n2"><span>3.5 Fase 5 — Sidebar y filtros</span><span class="idx-pag">6</span></div>
+    <div class="idx n2"><span>3.6 Fase 6 — Versión final</span><span class="idx-pag">6</span></div>
+    <div class="idx n2"><span>3.7 Despliegue en internet (GitHub Pages)</span><span class="idx-pag">6</span></div>
+
+    <div class="idx n1" style="margin-top:8px;"><span>4. Sistema de Copias de Seguridad (Parte Sistemes)</span><span class="idx-pag">7</span></div>
+    <div class="idx n2"><span>4.1 Fase 1 — Análisis del proyecto</span><span class="idx-pag">7</span></div>
+    <div class="idx n3"><span>4.1.1 Elementos a proteger</span><span class="idx-pag">7</span></div>
+    <div class="idx n3"><span>4.1.2 Riesgos específicos</span><span class="idx-pag">7</span></div>
+    <div class="idx n2"><span>4.2 Fase 2 — Diseño del sistema</span><span class="idx-pag">8</span></div>
+    <div class="idx n2"><span>4.3 Fase 3 — Implementación técnica</span><span class="idx-pag">8</span></div>
+    <div class="idx n3"><span>4.3.1 Script backup.bat</span><span class="idx-pag">8</span></div>
+    <div class="idx n3"><span>4.3.2 Automatización con Task Scheduler</span><span class="idx-pag">9</span></div>
+    <div class="idx n2"><span>4.4 Fase 4 — Mejora y seguridad</span><span class="idx-pag">9</span></div>
+    <div class="idx n3"><span>4.4.1 Eliminación automática de copias antiguas</span><span class="idx-pag">9</span></div>
+    <div class="idx n3"><span>4.4.2 Verificación de integridad con hash SHA256</span><span class="idx-pag">9</span></div>
+    <div class="idx n2"><span>4.5 Fase 5 — Restauración (OBLIGATORIA)</span><span class="idx-pag">10</span></div>
+    <div class="idx n3"><span>4.5.1 Prueba de restauración del proyecto</span><span class="idx-pag">10</span></div>
+    <div class="idx n3"><span>4.5.2 Prueba de restauración de la base de datos</span><span class="idx-pag">10</span></div>
+    <div class="idx n3"><span>4.5.3 Evidencias y logs</span><span class="idx-pag">10</span></div>
+
+    <div class="idx n1" style="margin-top:8px;"><span>5. Conclusiones</span><span class="idx-pag">11</span></div>
+
+    <div class="num-pag">2</div>
+</div>
+
+<!-- ============================= SECCIÓN 1 ============================= -->
+<div class="pagina">
+    <h1 class="cap">1. Introducción</h1>
+
+    <h2 class="sub">1.1 Descripción del proyecto</h2>
+    <p class="t">
+        Este proyecto es una tienda online de productos ecológicos llamada <strong>Campo Fresco</strong>. Está desarrollada íntegramente con tecnologías web del lado del cliente: HTML5, CSS3 y JavaScript puro (sin frameworks). Para la persistencia de datos se utiliza la API <code>localStorage</code> del navegador, lo que permite simular una base de datos sin necesidad de servidor.
+    </p>
+    <p class="t">
+        El proyecto se ha desarrollado de forma progresiva a lo largo de 6 semanas, empezando desde una estructura HTML muy básica y añadiendo funcionalidades cada semana hasta llegar a la versión final completa. Esta metodología de trabajo por fases nos ha permitido ir aprendiendo y aplicando los conocimientos de forma ordenada.
+    </p>
+
+    <h2 class="sub">1.2 Objetivos</h2>
+    <ul class="l">
+        <li>Crear una aplicación web funcional y estética para una tienda de productos ecológicos.</li>
+        <li>Implementar un sistema de autenticación (login y registro) con validaciones completas en los formularios.</li>
+        <li>Desarrollar un CRUD completo para la gestión del catálogo de productos desde un panel de administración.</li>
+        <li>Practicar el almacenamiento en el cliente con localStorage simulando una base de datos.</li>
+        <li>Aplicar buenas prácticas de diseño: sidebar de navegación, mensajes de feedback, confirmación antes de borrar.</li>
+        <li>Diseñar e implementar un sistema de copias de seguridad automatizado para el entorno de desarrollo (parte de Sistemes).</li>
+        <li>Trabajar de forma organizada con un tablero Kanban y un repositorio GitHub.</li>
+    </ul>
+
+    <h2 class="sub">1.3 Tecnologías utilizadas</h2>
+    <table class="tabla">
+        <thead><tr><th>Tecnología</th><th>Uso en el proyecto</th></tr></thead>
+        <tbody>
+            <tr><td><strong>HTML5</strong></td><td>Estructura semántica de todas las páginas</td></tr>
+            <tr><td><strong>CSS3</strong></td><td>Diseño visual, variables CSS, Flexbox, Grid, animaciones</td></tr>
+            <tr><td><strong>JavaScript ES6</strong></td><td>Lógica de la aplicación, manipulación del DOM, eventos</td></tr>
+            <tr><td><strong>PHP 8.3 + PDO</strong></td><td>API REST del servidor: login, registro, sesión, CRUD de productos</td></tr>
+            <tr><td><strong>MariaDB 10.11</strong></td><td>Base de datos real en el servidor (tablas usuarios y productos)</td></tr>
+            <tr><td><strong>Nginx 1.24</strong></td><td>Servidor web en Linux, sirve la aplicación en el puerto 8082</td></tr>
+            <tr><td><strong>localStorage</strong></td><td>Almacenamiento del carrito de la compra en el navegador</td></tr>
+            <tr><td><strong>Git / GitHub</strong></td><td>Control de versiones y trabajo colaborativo (github.com/AlexV30/Proyecto)</td></tr>
+            <tr><td><strong>Shell scripts + cron</strong></td><td>Automatización de copias de seguridad en Linux (backup.sh, restaurar.sh)</td></tr>
+            <tr><td><strong>mysqldump + sha256sum</strong></td><td>Exportación de BD y verificación de integridad de backups</td></tr>
+        </tbody>
+    </table>
+
+    <div class="num-pag">3</div>
+</div>
+
+<!-- ============================= SECCIÓN 2 ============================= -->
+<div class="pagina">
+    <h1 class="cap">2. Análisis y Requisitos</h1>
+
+    <h2 class="sub">2.1 Requisitos funcionales de la web</h2>
+    <p class="t">Los requisitos mínimos establecidos para la parte de desarrollo web son los siguientes, y todos están cubiertos en la versión final del proyecto (Fase 6):</p>
+    <table class="tabla">
+        <thead><tr><th>Requisito</th><th>Descripción</th><th>Estado</th></tr></thead>
+        <tbody>
+            <tr><td>Login y registro</td><td>Usuarios guardados en localStorage, sesión activa</td><td>✅ Implementado</td></tr>
+            <tr><td>Página moderna con sidebar</td><td>Menú lateral fijo en todas las páginas</td><td>✅ Implementado</td></tr>
+            <tr><td>CRUD completo</td><td>Crear, leer, editar y eliminar productos desde admin.html</td><td>✅ Implementado</td></tr>
+            <tr><td>Confirmación antes de eliminar</td><td>Modal de confirmación personalizado (sin confirm() nativo)</td><td>✅ Implementado</td></tr>
+            <tr><td>Formularios con validación</td><td>Campos obligatorios, formato email, contraseña mínima</td><td>✅ Implementado</td></tr>
+            <tr><td>Mensajes de error y éxito</td><td>Toast notifications y mensajes inline en formularios</td><td>✅ Implementado</td></tr>
+        </tbody>
+    </table>
+
+    <h2 class="sub">2.2 Estructura de la aplicación</h2>
+    <p class="t">La versión final (Fase 6) está compuesta por cuatro páginas interconectadas:</p>
+    <ul class="l">
+        <li><strong>index.html</strong> — Página de inicio con hero, sección de características y productos destacados cargados dinámicamente.</li>
+        <li><strong>productos.html</strong> — Tienda completa con todos los productos, filtros por categoría y buscador en tiempo real.</li>
+        <li><strong>login.html</strong> — Página de autenticación con dos pestañas (iniciar sesión / crear cuenta) y validaciones completas.</li>
+        <li><strong>admin.html</strong> — Panel de administración con CRUD de productos, solo accesible si hay sesión activa.</li>
+    </ul>
+
+    <h2 class="sub">2.3 Flujo de la aplicación</h2>
+    <ol class="l">
+        <li>El usuario llega a index.html y puede explorar los productos destacados sin estar registrado.</li>
+        <li>Si quiere comprar, puede añadir productos a la cesta (se guarda en localStorage).</li>
+        <li>Para gestionar productos, necesita ir a login.html y registrarse o iniciar sesión.</li>
+        <li>Una vez autenticado, el sidebar muestra el enlace al panel de Administración.</li>
+        <li>Desde admin.html puede añadir, editar o eliminar productos del catálogo.</li>
+        <li>Cualquier cambio se refleja automáticamente en index.html y productos.html.</li>
+    </ol>
+
+    <div class="num-pag">4</div>
+</div>
+
+<!-- ============================= SECCIÓN 3 ============================= -->
+<div class="pagina">
+    <h1 class="cap">3. Desarrollo por Fases</h1>
+
+    <p class="t">El proyecto se desarrolló durante 6 semanas, mejorando la aplicación de forma progresiva. Cada fase añade funcionalidades sobre la anterior.</p>
+
+    <h2 class="sub"><span class="fase-badge">Fase 1</span> Estructura base (Semana 1 — ~5h)</h2>
+    <p class="t">Primera versión con HTML y CSS básico. Página de inicio con hero, 4 productos hardcodeados, modal de registro con CSS puro (checkbox hack), carrito con <code>alert()</code>. Sin JavaScript complejo.</p>
+
+    <h2 class="sub"><span class="fase-badge">Fase 2</span> Carrito con localStorage (Semana 2 — ~6h)</h2>
+    <p class="t">Se añade una segunda página (<code>productos.html</code>) con 10 productos en categorías. El carrito pasa a usar <code>localStorage</code> con un panel lateral deslizante. CSS reorganizado con variables CSS (<code>:root</code>). Animaciones de hover.</p>
+
+    <h2 class="sub"><span class="fase-badge">Fase 3</span> Login y registro real (Semana 3 — ~7h)</h2>
+    <p class="t">Se crea <code>login.html</code> con dos pestañas. Los usuarios se guardan en <code>localStorage</code>. Validaciones: email con formato correcto, contraseña mínimo 6 caracteres, contraseñas deben coincidir, email no duplicado. Mensajes de error debajo de cada campo.</p>
+
+    <h2 class="sub"><span class="fase-badge">Fase 4</span> Panel admin y CRUD (Semana 4 — ~8h)</h2>
+    <p class="t">Se desarrolla <code>admin.html</code>. Los productos ya no están hardcodeados en el HTML: se almacenan en <code>localStorage</code> como array de objetos y se cargan dinámicamente. CRUD completo: añadir, editar (formulario pre-rellenado) y eliminar (con <code>confirm()</code> nativo). Formulario con validaciones.</p>
+
+    <h2 class="sub"><span class="fase-badge">Fase 5</span> Sidebar y filtros (Semana 5 — ~7h)</h2>
+    <p class="t">Rediseño completo del layout: el menú horizontal se convierte en un <strong>sidebar vertical fijo</strong> a la izquierda usando <code>display: flex</code> en el body. Se añaden filtros de categoría (botones) y buscador en tiempo real (evento <code>input</code>). Validaciones visuales con sombra y borde de color.</p>
+
+    <h2 class="sub"><span class="fase-badge">Fase 6</span> Versión final con backend real (Semana 6 — ~10h)</h2>
+    <p class="t">La gran novedad de esta fase es la integración con un <strong>servidor Linux real</strong>. Se crea una API REST en PHP que conecta con MariaDB, y la web pasa de usar localStorage a peticiones fetch reales al servidor:</p>
+    <ul class="l">
+        <li><strong>API REST en PHP:</strong> archivos login.php, registro.php, sesion.php, logout.php y productos.php en la carpeta <code>/api/</code>.</li>
+        <li><strong>Base de datos MariaDB:</strong> tablas <code>usuarios</code> (id, nombre, email, password hasheado) y <code>productos</code> (id, nombre, precio, categoria, descripcion, imagen).</li>
+        <li><strong>Servidor Nginx:</strong> el proyecto se despliega en un servidor Ubuntu (IP: 192.168.0.20, puerto 8082) con Nginx + PHP-FPM.</li>
+        <li><strong>Modal de confirmación personalizado</strong> para el borrado de productos (sin confirm() nativo).</li>
+        <li><strong>Sistema de notificaciones toast</strong> que reemplazan todos los alert() del proyecto.</li>
+    </ul>
+    <p class="t">Las fases 1-5 usaban localStorage para todo. En la Fase 6, los datos de usuarios y productos se guardan en la base de datos del servidor, lo que permite que varios usuarios accedan y los cambios persistan entre sesiones y dispositivos.</p>
+
+    <div class="num-pag">5</div>
+</div>
+
+<!-- ============================= SECCIÓN 3.7: DESPLIEGUE ============================= -->
+<div class="pagina">
+    <h1 class="cap" style="margin-top:0;">3.7 Despliegue en servidor propio Linux</h1>
+
+    <p class="t">
+        En la Fase 6, el proyecto se despliega en un servidor real con Ubuntu Server, usando Nginx como servidor web y MariaDB como base de datos. Esto permite tener un backend PHP funcional con sesiones reales y persistencia de datos real (no localStorage).
+    </p>
+
+    <h2 class="sub">Arquitectura del servidor</h2>
+    <table class="tabla">
+        <thead><tr><th>Componente</th><th>Software</th><th>Version</th><th>Funcion</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Sistema operativo</strong></td><td>Ubuntu Server</td><td>24.04 LTS</td><td>Sistema base del servidor</td></tr>
+            <tr><td><strong>Servidor web</strong></td><td>Nginx</td><td>1.24.0</td><td>Sirve la web y pasa PHP a PHP-FPM</td></tr>
+            <tr><td><strong>PHP</strong></td><td>PHP-FPM</td><td>8.3.30</td><td>Ejecuta los scripts de la API</td></tr>
+            <tr><td><strong>Base de datos</strong></td><td>MariaDB</td><td>10.11.14</td><td>Almacena usuarios y productos</td></tr>
+        </tbody>
+    </table>
+
+    <h2 class="sub">URL de acceso al proyecto</h2>
+    <div class="ok-box" style="font-size:1rem;">
+        Red local: <strong>http://192.168.0.20:8082/Fase6/</strong>
+    </div>
+
+    <h2 class="sub">Estructura de la API</h2>
+    <p class="t">Los archivos PHP se encuentran en la carpeta <code>/api/</code> del proyecto. Cada archivo gestiona una funcion especifica del backend:</p>
+    <table class="tabla">
+        <thead><tr><th>Archivo</th><th>Metodo HTTP</th><th>Funcion</th></tr></thead>
+        <tbody>
+            <tr><td><code>config.php</code></td><td>-</td><td>Conexion a MariaDB con PDO y funcion responder()</td></tr>
+            <tr><td><code>login.php</code></td><td>POST</td><td>Verifica email y password, inicia sesion PHP</td></tr>
+            <tr><td><code>registro.php</code></td><td>POST</td><td>Crea nuevo usuario con password hasheado (password_hash)</td></tr>
+            <tr><td><code>sesion.php</code></td><td>GET</td><td>Comprueba si hay sesion activa y devuelve los datos del usuario</td></tr>
+            <tr><td><code>logout.php</code></td><td>POST</td><td>Destruye la sesion PHP del usuario</td></tr>
+            <tr><td><code>productos.php</code></td><td>GET/POST/PUT/DELETE</td><td>CRUD completo de productos en la base de datos</td></tr>
+        </tbody>
+    </table>
+
+    <h2 class="sub">Repositorio en GitHub</h2>
+    <div class="ok-box">
+        <strong>github.com/AlexV30/Proyecto</strong> — con commits por cada fase del proyecto.
+    </div>
+
+    <div class="num-pag">6</div>
+</div>
+
+<!-- ============================= SECCIÓN 4: BACKUP ============================= -->
+<div class="pagina">
+    <h1 class="cap">4. Sistema de Copias de Seguridad <span style="font-size:1rem;color:#888;">(Parte Sistemes)</span></h1>
+
+    <h2 class="sub">4.1 Fase 1 — Análisis del proyecto</h2>
+
+    <h3 class="subsub">4.1.1 Elementos a proteger</h3>
+    <p class="t">Nuestro proyecto <em>Campo Fresco</em> está alojado localmente en XAMPP. Los elementos que necesitamos proteger son:</p>
+    <table class="tabla">
+        <thead><tr><th>Elemento</th><th>Ubicacion en servidor</th><th>Criticidad</th><th>Por que?</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Codigo fuente</strong></td><td>/var/www/campofreso/</td><td>Alta</td><td>Si se pierde, perdemos semanas de trabajo</td></tr>
+            <tr><td><strong>Base de datos MariaDB</strong></td><td>campofrescodb (usuarios + productos)</td><td>Alta</td><td>Datos reales de usuarios y catalogo de productos</td></tr>
+            <tr><td><strong>Config Nginx</strong></td><td>/etc/nginx/sites-enabled/campofreso.conf</td><td>Media</td><td>Sin ella el servidor no sabe como servir la web</td></tr>
+        </tbody>
+    </table>
+
+    <h3 class="subsub">4.1.2 Riesgos especificos de nuestra web</h3>
+    <p class="t">Despues de analizar nuestro proyecto concreto, identificamos los siguientes riesgos:</p>
+    <ul class="l">
+        <li><strong>Borrado accidental del codigo:</strong> Si alguien elimina la carpeta /var/www/campofreso/ del servidor, perdemos todo el trabajo. Es el riesgo mas probable.</li>
+        <li><strong>Fallo del disco del servidor:</strong> Si el disco del servidor Linux falla, se pierde tanto el codigo como la base de datos.</li>
+        <li><strong>Corrupcion de la base de datos:</strong> Un fallo durante una escritura en MariaDB podria dejar tablas corruptas. Los datos de usuarios y productos se perderian.</li>
+        <li><strong>Perdida de registros:</strong> Al tener usuarios y productos reales en la base de datos, un fallo sin backup supone perder informacion de clientes.</li>
+    </ul>
+
+    <div class="aviso"><strong>Justificacion de la frecuencia:</strong> El proyecto esta en desarrollo activo y la BD cambia cada vez que se añaden usuarios o productos. Hacemos copias <strong>de lunes a viernes a las 23:00h con cron</strong>. En el peor caso, perdemos el trabajo de un dia.</div>
+
+    <div class="num-pag">7</div>
+</div>
+
+<div class="pagina">
+    <h2 class="sub">4.2 Fase 2 — Diseño del sistema de copias</h2>
+    <table class="tabla">
+        <thead><tr><th>Parametro</th><th>Decision tomada</th><th>Justificacion</th></tr></thead>
+        <tbody>
+            <tr><td>Tipo de copia</td><td>Copia completa</td><td>El proyecto es pequeno (&lt;5MB), no merece la pena incremental</td></tr>
+            <tr><td>Frecuencia</td><td>Diaria (L-V a las 23:00h con cron)</td><td>El codigo y la BD cambian cada dia durante el desarrollo</td></tr>
+            <tr><td>Retencion</td><td>7 dias</td><td>Permite volver hasta una semana atras si el error se detecta tarde</td></tr>
+            <tr><td>Formato</td><td>tar.gz + SQL</td><td>tar.gz comprime bien en Linux. SQL exporta la BD con mysqldump</td></tr>
+            <tr><td>Nombre del archivo</td><td>backup_YYYY-MM-DD_HH-MM.tar.gz</td><td>La fecha en el nombre permite ordenar e identificar versiones</td></tr>
+            <tr><td>Ubicacion</td><td>/home/valle/backup/backups/</td><td>Carpeta separada del proyecto web (/var/www/)</td></tr>
+            <tr><td>Logs</td><td>/home/valle/backup/logs/backup.log</td><td>Para comprobar si el backup automatico funciono cada noche</td></tr>
+            <tr><td>Integridad</td><td>Hash SHA256 con sha256sum</td><td>Detecta si el archivo se ha corrompido antes de restaurar</td></tr>
+        </tbody>
+    </table>
+
+    <h2 class="sub">4.3 Fase 3 — Implementación técnica</h2>
+
+    <h3 class="subsub">4.3.1 Script backup.sh — Puntos clave</h3>
+    <p class="t">Creamos el archivo <code>/home/valle/backup/backup.sh</code>. Los 4 pasos que realiza son:</p>
+    <div class="code-block"><span class="verde"># 1. Comprimir proyecto en tar.gz con fecha y hora</span>
+<span class="amarillo">tar</span> -czf <span class="naranja">"${TAR}"</span> -C /var/www campofreso
+
+<span class="verde"># 2. Exportar base de datos con mysqldump</span>
+<span class="azul">mysqldump</span> -u<span class="naranja">"${DB_USUARIO}"</span> -p<span class="naranja">"${DB_PASS}"</span> <span class="naranja">"${DB_NOMBRE}"</span> > <span class="naranja">"${SQL}"</span>
+
+<span class="verde"># 3. Generar hash SHA256 para verificar integridad despues</span>
+<span class="azul">sha256sum</span> <span class="naranja">"${TAR}"</span> > <span class="naranja">"${HASH}"</span>
+
+<span class="verde"># 4. Eliminar backups de mas de 7 dias automaticamente</span>
+<span class="azul">find</span> <span class="naranja">"${DESTINO}"</span> -name <span class="naranja">"backup_*.tar.gz"</span> -mtime +7 -delete</div>
+
+    <h3 class="subsub">4.3.2 Automatizacion con cron (Linux)</h3>
+    <p class="t">Para ejecutar el backup automaticamente cada dia, configuramos una tarea cron con el comando <code>crontab -e</code>:</p>
+    <div class="code-block"><span class="verde"># Ejecutar backup.sh de lunes a viernes a las 23:00h</span>
+<span class="azul">0 23 * * 1-5</span> /home/valle/backup/backup.sh</div>
+    <p class="t">La sintaxis de cron es: minuto hora dia-mes mes dia-semana. El 1-5 indica de lunes (1) a viernes (5). Esto lo añadimos con: <code>crontab -e</code> y añadiendo la linea anterior.</p>
+
+    <h2 class="sub">4.4 Fase 4 — Mejora y seguridad</h2>
+
+    <h3 class="subsub">4.4.1 Eliminación automática de copias antiguas</h3>
+    <p class="t">El script usa el comando <code>forfiles</code> para eliminar automáticamente los ZIP, SQL y SHA256 con más de 7 días. Así la carpeta de backup no crece indefinidamente y no ocupa demasiado espacio en disco.</p>
+
+    <h3 class="subsub">4.4.2 Verificacion de integridad con hash SHA256</h3>
+    <p class="t">Cada vez que se crea un backup, el script genera un archivo <code>.sha256</code> con el hash del tar.gz usando <code>sha256sum</code> de Linux. Para verificar que un backup no se ha corrompido, creamos el script <code>verificar.sh</code>:</p>
+    <div class="code-block"><span class="verde"># Verificar integridad de todos los backups disponibles</span>
+<span class="azul">sha256sum</span> --check <span class="naranja">"${HASH_FILE}"</span>
+
+<span class="verde"># Resultado si el backup esta bien:</span>
+backup_2026-04-29_06-37.tar.gz: <span class="azul">OK</span>
+
+<span class="verde"># Resultado si el backup esta corrupto:</span>
+backup_2026-04-29_06-37.tar.gz: <span class="naranja">FAILED</span></div>
+
+    <p class="t">El script <code>restaurar.sh</code> verifica automaticamente la integridad antes de restaurar, y avisa al usuario si el hash no coincide antes de continuar.</p>
+
+    <div class="num-pag">9</div>
+</div>
+
+<div class="pagina">
+    <h2 class="sub">4.5 Fase 5 — Restauración (OBLIGATORIA)</h2>
+
+    <p class="t">Para demostrar que el sistema funciona de verdad, realizamos dos pruebas de restauración completas.</p>
+
+    <h3 class="subsub">4.5.1 Prueba de restauracion del proyecto</h3>
+    <ol class="l">
+        <li>Ejecutamos <code>backup.sh</code> manualmente y confirmamos que se crea el tar.gz en <code>/home/valle/backup/backups/</code>.</li>
+        <li>Borramos la carpeta <code>/var/www/campofreso/</code> del servidor: <code>sudo rm -rf /var/www/campofreso</code>.</li>
+        <li>Comprobamos que al abrir <code>http://192.168.0.20:8082/Fase6/</code> aparece un error 404.</li>
+        <li>Ejecutamos <code>restaurar.sh</code>, seleccionamos el backup creado y confirmamos.</li>
+        <li>Abrimos <code>http://192.168.0.20:8082/Fase6/</code> y verificamos que la web vuelve a funcionar.</li>
+    </ol>
+    <div class="ok-box">Resultado: La web volvio a funcionar correctamente tras la restauracion. Todos los archivos HTML, CSS, PHP e imagenes se restauraron sin problemas.</div>
+
+    <h3 class="subsub">4.5.2 Prueba de restauracion de la base de datos</h3>
+    <ol class="l">
+        <li>Conectamos a MariaDB y eliminamos la BD: <code>mysql -e "DROP DATABASE campofrescodb;"</code>.</li>
+        <li>Recreamos la BD vacia: <code>mysql -e "CREATE DATABASE campofrescodb;"</code>.</li>
+        <li>Restauramos desde el archivo SQL del backup: <code>mysql campofrescodb &lt; backup_FECHA.sql</code>.</li>
+        <li>Verificamos en MariaDB que las tablas y datos vuelven a existir correctamente.</li>
+    </ol>
+    <div class="ok-box">Resultado: La base de datos (10 productos + 1 usuario) se restauro correctamente desde el archivo SQL del backup.</div>
+
+    <h3 class="subsub">4.5.3 Evidencias y logs</h3>
+    <p class="t">A continuación se muestra un extracto real del archivo <code>backup.log</code> generado durante las pruebas:</p>
+    <div class="log-box">
+[2026-04-29_06-37] ===== INICIO BACKUP =====
+[2026-04-29_06-37] Web: /var/www/campofreso
+[2026-04-29_06-37] Destino: /home/valle/backup/backups
+[2026-04-29_06-37] OK - Proyecto comprimido en tar.gz (740K)
+[2026-04-29_06-37] OK - Base de datos exportada (96 lineas SQL)
+[2026-04-29_06-37] OK - Hash SHA256 generado: d3fca845302be82fab0e...
+[2026-04-29_06-37] OK - Limpieza de copias antiguas (mas de 7 dias) completada
+[2026-04-29_06-37] ===== FIN BACKUP (EXITOSO) =====
+
+Verificacion de backups disponibles:
+  [OK]  backup_2026-04-29_06-37  (740K)
+Resultado: 1/1 backups integros. Todo correcto.</div>
+
+    <div class="num-pag">10</div>
+</div>
+
+<!-- ============================= SECCIÓN 5: CONCLUSIONES ============================= -->
+<div class="pagina">
+    <h1 class="cap">5. Conclusiones</h1>
+
+    <p class="t">
+        Este proyecto ha sido una experiencia muy completa porque hemos tenido que combinar el desarrollo web con la administracion de sistemas, que son dos cosas muy diferentes pero que en el mundo real siempre van juntas.
+    </p>
+    <p class="t">
+        En la parte de desarrollo web, la progresion de las 6 fases nos ha permitido ver claramente como mejora una aplicacion: empezamos con HTML estatico y acabamos con una API REST en PHP conectada a MariaDB. Lo mas interesante fue implementar el sistema de login con sesiones PHP reales y ver como el frontend (JavaScript) se comunica con el backend (PHP) mediante fetch y JSON. Tambien aprendimos a hacer validaciones de formularios propias, con feedback visual en tiempo real.
+    </p>
+    <p class="t">
+        El cambio mas visible entre la primera fase y la ultima fue la arquitectura completa: de archivos estaticos en local a una aplicacion web cliente-servidor desplegada en Linux. Anadir el sidebar lateral, el modal de confirmacion y los toast notifications hace que la aplicacion parezca mucho mas profesional.
+    </p>
+    <p class="t">
+        En la parte de sistemas, aprendimos a configurar un servidor Linux real con Nginx, PHP-FPM y MariaDB desde cero. Los scripts de backup en shell (bash) son mas potentes que los .bat de Windows, y usar cron para automatizar las copias es lo que hacen los administradores de sistemas en el mundo real. Ahora cuando hagamos cualquier proyecto lo primero que configuraremos sera un backup automatico con verificacion de integridad.
+    </p>
+    <p class="t">
+        Si tuvieramos mas tiempo, anyadiriamos una pasarela de pago simulada para completar el flujo de compra, y mejorariamos el sistema de backup para que envie un email de confirmacion automatico cuando se ejecute correctamente (o una alerta si falla).
+    </p>
+
+    <div style="margin-top:50px;text-align:center;border-top:1px solid #eee;padding-top:25px;color:#aaa;font-size:0.82rem;font-family:'Segoe UI',sans-serif;">
+        Campo Fresco — Projecte Intermodular 2025-2026 &nbsp;|&nbsp; Institut [Nombre del Centro]
+    </div>
+
+    <div class="num-pag">11</div>
+</div>
+
+</body>
+</html>
