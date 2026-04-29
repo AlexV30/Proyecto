@@ -1,0 +1,97 @@
+Projecte  
+Intermodular 
+Requisits Generals 
+Projecte Intermodular 
+Requisits Generals 
+Tots els alumnes que presentin el projecte final hauran de complir obligatòriament els 
+requisits mínims següents. El fet de no complir-los suposarà una valoració negativa del 
+treball, encara que el producte final funcioni correctament. 
+1. Organització del treball amb Kanban 
+Cada projecte s’haurà de gestionar mitjançant un tauler Kanban. 
+El tauler haurà de tenir, com a mínim, les columnes següents: 
+• Pendent 
+• En procés 
+• Fet 
+Cada tasca del projecte haurà d’aparèixer al Kanban de manera clara i concreta. No serà 
+vàlid escriure tasques massa generals com ara “fer el projecte”. Les tasques s’hauran de 
+dividir en parts petites, clares i entenedores i s’han d’anar assignades al membre del 
+projecte que ha de fer aquella tasca. 
+Exemples de tasques correctes: 
+• Dissenyar la portada 
+• Crear l’índex 
+• Preparar l’estructura de la documentació 
+• Configurar el repositori 
+• Pujar la primera versió del projecte 
+• Redactar la introducció 
+• Preparar la presentació final 
+• Fer la página principal de la web. 
+• Fer l’inici de sessió. 
+El Kanban haurà de reflectir el treball real dut a terme durant el projecte. S’hi haurà de 
+poder veure l’organització, el seguiment i l’evolució del treball. 
+A part, s’ha de veure perfectamente el “timing” de quantes hores se li han dedicat a cada 
+tasca, ho podeu fer amb una tabla básica de Word o bé fent servir alguna plataforma. 
+2. Ús obligatori de GitHub 
+Tots els alumnes hauran de treballar amb un repositori a GitHub. 
+El repositori haurà de complir les condicions següents: 
+• Tenir un nom clar i relacionat amb el projecte 
+• Estar ordenat i ben estructurat 
+• Contenir els fitxers del projecte i la documentació 
+• Mostrar evidències del treball real mitjançant pujades i actualitzacions durant el 
+desenvolupament. 
+No es considerarà vàlid crear el repositori al final i pujar-hi tot el contingut de cop. 
+GitHub s’haurà d’utilitzar com a eina de treball, seguiment i control de versions del 
+projecte. 
+Es valorarà positivament: 
+• Que hi hagi diversos commits 
+• Que els commits tinguin missatges clars i descriptius 
+• Que el repositori estigui ben organitzat per carpetes 
+• Que es pugui observar l’evolució del projecte 
+3. Documentació obligatòria 
+Tots els projectes hauran d’anar acompanyats d’una documentació escrita ben 
+presentada, neta i ordenada. 
+Com a mínim, la documentació haurà d’incloure: 
+Portada 
+La portada haurà d’estar ben feta i incloure, com a mínim: 
+• Nom del centre 
+• Títol del projecte 
+• Nom i cognoms dels alumnes del grup. 
+• Curs / grup 
+• Cicle formatiu o mòdul 
+• Nom del professor o tutors 
+• Data de lliurament 
+• Curs acadèmic 
+La portada haurà de tenir un disseny cuidat. No serà vàlida una primera pàgina 
+improvisada, buida o amb informació incompleta. 
+Índex 
+La documentació haurà d’incloure un índex al principi del document. 
+L’índex haurà de: 
+• Estar ordenat 
+• Coincidir amb els apartats reals del document 
+• Incloure numeració 
+• Facilitar la localització del contingut 
+No serà vàlid incloure un índex decoratiu que després no coincideixi amb el contingut 
+real del document. 
+4. Presentació general del document 
+La documentació haurà de seguir unes normes mínimes de presentació: 
+• Redacció clara i formal 
+• Bona ortografia 
+• Apartats ben diferenciats 
+• Pàgines ordenades 
+• Contingut llegible 
+• Disseny net i professional 
+No s’acceptaran documents amb mala presentació, textos copiats sense revisar, apartats 
+desordenats o manca d’estructura. 
+5. Coherència entre el treball, la documentació i el repositori 
+Hi haurà d’haver coherència entre: 
+• El que apareix al Kanban 
+• El que s’ha pujat a GitHub 
+• El que s’explica a la documentació 
+El tribunal haurà de poder comprovar que l’alumne ha treballat de manera organitzada i 
+que el projecte no s’ha improvisat a última hora. 
+6. Requisits mínims per poder defensar el projecte 
+Per poder fer una defensa seriosa del projecte davant del tribunal, l’alumne haurà de 
+presentar obligatòriament 3 dies abans de la presentación final: 
+• El Kanban actualitzat 
+• El repositori de GitHub amb evidències del procés de treball 
+• La documentació amb una portada correcta i un índex ben estructurat 
+Sense aquests elements bàsics, el projecte es considerarà incomplet.

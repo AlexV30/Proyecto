@@ -1,0 +1,5 @@
+A més del login i registre i pàgina moderna amb logo y menu a la esquerra, haureu d’incloure:
+CRUD complet d’un recurs principal
+Confirmació abans d’eliminar
+Formularis amb validació
+Missatges d’error i èxit

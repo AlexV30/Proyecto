@@ -1,0 +1,82 @@
+===============================================================
+  SISTEMA DE COPIAS DE SEGURIDAD - Campo Fresco
+  Proyecto Intermodular 2025-2026
+===============================================================
+
+ARCHIVOS INCLUIDOS:
+  - backup.bat      → Hace la copia de seguridad
+  - restaurar.bat   → Restaura desde un backup
+  - este archivo    → Instrucciones de uso
+
+===============================================================
+ ANTES DE USAR LOS SCRIPTS: CONFIGURACION
+===============================================================
+
+Abre backup.bat y restaurar.bat con el Bloc de Notas y cambia
+estas variables según tu equipo:
+
+  PROYECTO  → Ruta a la carpeta de tu web en htdocs
+              Por defecto: C:\xampp\htdocs\CampoFresco
+
+  DESTINO   → Carpeta donde se guardarán los backups
+              Por defecto: D:\Backups\CampoFresco
+              (si no tienes disco D:\, cambia a C:\Backups\CampoFresco)
+
+  MYSQL_BIN → Ruta a los ejecutables de MySQL de XAMPP
+              Por defecto: C:\xampp\mysql\bin
+
+  DB_NOMBRE → Nombre de tu base de datos (si tienes una)
+              Si solo usas localStorage, puedes ignorar esto.
+
+===============================================================
+ CÓMO HACER UN BACKUP MANUAL
+===============================================================
+
+1. Haz doble clic en backup.bat
+2. Espera a que termine (verás los pasos en la ventana negra)
+3. El ZIP se guardará en la carpeta DESTINO con la fecha y hora
+
+===============================================================
+ CÓMO AUTOMATIZAR EL BACKUP (Task Scheduler)
+===============================================================
+
+1. Abre el "Programador de tareas" de Windows
+   (busca "Programador de tareas" en el menú inicio)
+
+2. Clic en "Crear tarea básica..."
+
+3. Nombre: "Backup CampoFresco"
+   Descripción: "Copia de seguridad diaria del proyecto"
+
+4. Desencadenador: "Diariamente" → a las 23:00
+
+5. Acción: "Iniciar un programa"
+   Programa: ruta completa a backup.bat
+   Ej: C:\Users\TuNombre\Proyecto\backup\backup.bat
+
+6. Marcar "Ejecutar tanto si el usuario ha iniciado sesión como si no"
+
+7. Guardar y listo.
+
+===============================================================
+ CÓMO RESTAURAR DESDE UN BACKUP
+===============================================================
+
+1. IMPORTANTE: Cierra XAMPP antes de restaurar
+2. Haz doble clic en restaurar.bat
+3. Verás la lista de backups disponibles
+4. Escribe el nombre del archivo ZIP que quieres restaurar
+5. Confirma con S
+6. Arranca XAMPP y abre http://localhost/CampoFresco/
+
+===============================================================
+ MEDIDAS DE SEGURIDAD IMPLEMENTADAS
+===============================================================
+
+✓ Nombre de archivo con fecha y hora (fácil identificar versiones)
+✓ Log de todas las ejecuciones (backup.log / restaurar.log)
+✓ Eliminación automática de backups con más de 7 días
+✓ Confirmación antes de sobrescribir en la restauración
+✓ Control de errores en cada paso del script
+
+===============================================================
