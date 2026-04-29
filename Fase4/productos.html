@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tienda - Campo Fresco</title>
+<link rel="stylesheet" href="style4.css" />
+</head>
+<body>
+
+<div id="toast"></div>
+
+<header>
+  <nav class="nav">
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="productos.html">Tienda</a></li>
+      <li><a href="index.html#seccion-nosotros">Nosotros</a></li>
+      <li><a href="admin.html" id="nav-admin" style="display:none;">Administracion</a></li>
+    </ul>
+    <div style="display:flex; gap:15px; align-items:center;">
+      <div id="zona-usuario"><a href="login.html" class="btn-sm">Iniciar Sesion</a></div>
+      <button id="btnCesta" style="background:none;border:1px solid #fff;color:white;font-weight:bold;cursor:pointer;padding:7px 14px;border-radius:6px;">
+        Cesta (<span id="contador">0</span>)
+      </button>
+    </div>
+  </nav>
+</header>
+
+<div id="panelCesta">
+  <h2>Mi Cesta</h2>
+  <ul id="listaCesta"></ul>
+  <div id="total-cesta"></div>
+  <button id="btn-cerrar-cesta" onclick="cerrarCesta()">Cerrar</button>
+</div>
+
+<section class="shop-hero">
+  <h1>Nuestra Cosecha Fresca</h1>
+  <p>100% ecologico, del campo a tu casa</p>
+</section>
+
+<div class="container" id="contenido-tienda"></div>
+
+<footer>
+  <p>2026 Campo Fresco - Alex Valls - iMES - Proyecto Intermodular</p>
+</footer>
+
+<script>
+function toast(msg, tipo) {
+    tipo = tipo || 'exito';
+    const c = document.getElementById('toast');
+    const d = document.createElement('div');
+    d.className = 'toast-msg toast-' + tipo;
+    d.textContent = msg;
+    c.appendChild(d);
+    setTimeout(function() { d.style.opacity='0'; d.style.transition='opacity 0.4s'; setTimeout(function(){d.remove();},400); }, 2800);
+}
+
+const DEFAULTS = [
+    { id:1, nombre:"Manzanas Ecologicas", precio:3.99, categoria:"frutas", descripcion:"Sin pesticidas, directas del arbol.", imagen:"../Fase2/img/manzanas.PNG" },
+    { id:2, nombre:"Zanahorias Organicas", precio:2.49, categoria:"verduras", descripcion:"De la huerta al plato.", imagen:"../Fase2/img/zanahorias.png" },
+    { id:3, nombre:"Lechuga Fresca", precio:1.99, categoria:"verduras", descripcion:"Cosechada esta manana.", imagen:"../Fase2/img/lechuga.png" },
+    { id:4, nombre:"Fresas Frescas", precio:4.99, categoria:"frutas", descripcion:"Dulces y jugosas.", imagen:"../Fase2/img/fresas.png" },
+    { id:5, nombre:"Brocoli", precio:1.85, categoria:"verduras", descripcion:"100% organico.", imagen:"../Fase2/img/brocoli.png" },
+    { id:6, nombre:"Tomates Ecologicos", precio:2.60, categoria:"verduras", descripcion:"Jugosos y naturales.", imagen:"../Fase2/img/tomates.png" },
+    { id:7, nombre:"Uvas Ecologicas", precio:3.50, categoria:"frutas", descripcion:"Snack natural y dulce.", imagen:"../Fase2/img/uvas.png" },
+    { id:8, nombre:"Arroz Integral", precio:2.40, categoria:"basicos", descripcion:"Alto en fibra.", imagen:"../Fase2/img/arroz.png" },
+    { id:9, nombre:"Huevos Ecologicos", precio:3.90, categoria:"basicos", descripcion:"Gallinas en libertad.", imagen:"../Fase2/img/huevos.png" },
+    { id:10, nombre:"Lentejas Ecologicas", precio:2.10, categoria:"basicos", descripcion:"Proteina vegetal.", imagen:"../Fase2/img/lentejas.png" }
+];
+
+function cargarProductos() {
+    let p = JSON.parse(localStorage.getItem('productos'));
+    if (!p || p.length === 0) { localStorage.setItem('productos', JSON.stringify(DEFAULTS)); return DEFAULTS; }
+    return p;
+}
+
+const usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
+if (usuario) {
+    document.getElementById('zona-usuario').innerHTML =
+        '<span style="color:#ff9800;font-weight:bold;">Hola, ' + usuario.nombre + '</span> ' +
+        '<button class="btn-salir" onclick="cerrarSesion()" style="margin-left:8px;">Salir</button>';
+    document.getElementById('nav-admin').style.display = 'inline';
+}
+function cerrarSesion() { localStorage.removeItem('usuarioActivo'); window.location.reload(); }
+
+function renderizarTienda() {
+    const productos = cargarProductos();
+    const cont = document.getElementById('contenido-tienda');
+    cont.innerHTML = '';
+    const cats = { frutas:'Frutas del Sol', verduras:'Verduras de la Huerta', basicos:'Basicos Ecologicos' };
+    Object.keys(cats).forEach(function(cat) {
+        const prods = productos.filter(function(p) { return p.categoria === cat; });
+        if (!prods.length) return;
+        const h2 = document.createElement('h2'); h2.className='section-title'; h2.textContent=cats[cat]; cont.appendChild(h2);
+        const grid = document.createElement('div'); grid.className='grid';
+        prods.forEach(function(p) {
+            const c = document.createElement('div'); c.className='card';
+            c.innerHTML = '<img src="' + p.imagen + '" alt="' + p.nombre + '" onerror="this.style.display=\'none\'">' +
+                '<div class="card-body"><h3>' + p.nombre + '</h3><p>' + (p.descripcion||'') + '</p>' +
+                '<div class="price-row"><span class="price">' + parseFloat(p.precio).toFixed(2) + ' EUR</span>' +
+                '<button class="btn-buy" data-nombre="' + p.nombre + '" data-precio="' + p.precio + '">Anadir</button>' +
+                '</div></div>';
+            grid.appendChild(c);
+        });
+        grid.querySelectorAll('.btn-buy').forEach(function(btn) {
+            btn.onclick = function() {
+                let cesta = JSON.parse(localStorage.getItem('cesta')) || [];
+                cesta.push({ nombre: btn.dataset.nombre, precio: btn.dataset.precio });
+                localStorage.setItem('cesta', JSON.stringify(cesta));
+                actualizarContador();
+                toast(btn.dataset.nombre + ' anadido al carrito', 'exito');
+            };
+        });
+        cont.appendChild(grid);
+    });
+}
+
+function actualizarContador() {
+    document.getElementById('contador').textContent = (JSON.parse(localStorage.getItem('cesta')) || []).length;
+}
+function renderizarCesta() {
+    const cesta = JSON.parse(localStorage.getItem('cesta')) || [];
+    const lista = document.getElementById('listaCesta');
+    lista.innerHTML = '';
+    let total = 0;
+    if (!cesta.length) lista.innerHTML = '<li style="color:#bbb;text-align:center;padding:20px;">La cesta esta vacia</li>';
+    cesta.forEach(function(item, i) {
+        total += parseFloat(item.precio);
+        const li = document.createElement('li');
+        li.innerHTML = '<span>' + item.nombre + '</span><span>' + parseFloat(item.precio).toFixed(2) + 'EUR <button data-i="' + i + '">X</button></span>';
+        lista.appendChild(li);
+    });
+    lista.querySelectorAll('button').forEach(function(btn) {
+        btn.onclick = function() {
+            let c = JSON.parse(localStorage.getItem('cesta')) || [];
+            c.splice(parseInt(btn.dataset.i), 1);
+            localStorage.setItem('cesta', JSON.stringify(c));
+            actualizarContador(); renderizarCesta();
+        };
+    });
+    document.getElementById('total-cesta').textContent = cesta.length ? 'Total: ' + total.toFixed(2) + 'EUR' : '';
+}
+document.getElementById('btnCesta').onclick = function() {
+    document.getElementById('panelCesta').style.right = '0'; renderizarCesta();
+};
+function cerrarCesta() { document.getElementById('panelCesta').style.right = '-380px'; }
+
+actualizarContador();
+renderizarTienda();
+</script>
+</body>
+</html>

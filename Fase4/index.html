@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Campo Fresco - Tienda Ecologica</title>
+<link rel="stylesheet" href="style4.css" />
+</head>
+<body id="inicio">
+
+<div id="toast"></div>
+<div id="barra-bienvenida"></div>
+
+<header>
+  <nav class="nav">
+    <ul>
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#seccion-productos">Productos</a></li>
+      <li><a href="productos.html">Tienda</a></li>
+      <li><a href="#seccion-nosotros">Nosotros</a></li>
+      <li><a href="admin.html" id="nav-admin" style="display:none;">Administracion</a></li>
+    </ul>
+    <div class="header-right">
+      <input type="text" placeholder="Buscar producto..." id="search-input" />
+      <div id="zona-usuario">
+        <a href="login.html" class="btn-sm">Iniciar Sesion</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Frescura del Campo en tu Hogar</h1>
+  <p>Productos 100% organicos, cosechados hoy y entregados en la puerta de tu casa.</p>
+  <a href="#seccion-productos" class="btn">Explorar la Cosecha</a>
+</section>
+
+<section class="features" id="seccion-nosotros">
+  <div class="feature"><h3>100% Natural</h3><p>Sin pesticidas ni quimicos artificiales.</p></div>
+  <div class="feature"><h3>Envio Express</h3><p>Del campo a tu mesa en menos de 24h.</p></div>
+  <div class="feature"><h3>Apoyo Local</h3><p>Trato directo con el agricultor local.</p></div>
+  <div class="feature"><h3>Sostenible</h3><p>Comprometidos con el medio ambiente.</p></div>
+</section>
+
+<section class="products" id="seccion-productos">
+  <h2>Nuestros Productos Destacados</h2>
+  <div class="product-grid" id="main-grid"></div>
+</section>
+
+<div id="product-preview">
+  <div id="preview-content">
+    <span id="close-preview">&times;</span>
+    <img id="preview-img" src="" alt="" />
+    <h4 id="preview-name"></h4>
+    <div class="price" id="preview-price"></div>
+    <button id="preview-add" class="btn">Anadir al Carrito</button>
+  </div>
+</div>
+
+<section class="cta">
+  <h2>Quieres comer mas sano?</h2>
+  <p>Explora toda nuestra tienda con productos ecologicos de temporada.</p><br>
+  <a href="productos.html" class="btn">Ver toda la tienda</a>
+</section>
+
+<footer>
+  <p>2026 Campo Fresco - Alex Valls - iMES - Proyecto Intermodular</p>
+</footer>
+
+<script>
+function toast(msg, tipo) {
+    tipo = tipo || 'exito';
+    const c = document.getElementById('toast');
+    const d = document.createElement('div');
+    d.className = 'toast-msg toast-' + tipo;
+    d.textContent = msg;
+    c.appendChild(d);
+    setTimeout(function() { d.style.opacity='0'; d.style.transition='opacity 0.4s'; setTimeout(function(){d.remove();},400); }, 2800);
+}
+
+const DEFAULTS = [
+    { id:1, nombre:"Manzanas Ecologicas", precio:3.99, categoria:"frutas", descripcion:"Sin pesticidas, directas del arbol.", imagen:"../Fase2/img/manzanas.PNG" },
+    { id:2, nombre:"Zanahorias Organicas", precio:2.49, categoria:"verduras", descripcion:"De la huerta al plato.", imagen:"../Fase2/img/zanahorias.png" },
+    { id:3, nombre:"Lechuga Fresca", precio:1.99, categoria:"verduras", descripcion:"Cosechada esta manana.", imagen:"../Fase2/img/lechuga.png" },
+    { id:4, nombre:"Fresas Frescas", precio:4.99, categoria:"frutas", descripcion:"Dulces y jugosas.", imagen:"../Fase2/img/fresas.png" },
+    { id:5, nombre:"Brocoli", precio:1.85, categoria:"verduras", descripcion:"100% organico.", imagen:"../Fase2/img/brocoli.png" },
+    { id:6, nombre:"Tomates Ecologicos", precio:2.60, categoria:"verduras", descripcion:"Jugosos y naturales.", imagen:"../Fase2/img/tomates.png" },
+    { id:7, nombre:"Arroz Integral", precio:2.40, categoria:"basicos", descripcion:"Alto en fibra.", imagen:"../Fase2/img/arroz.png" },
+    { id:8, nombre:"Huevos Ecologicos", precio:3.90, categoria:"basicos", descripcion:"Gallinas en libertad.", imagen:"../Fase2/img/huevos.png" }
+];
+
+function cargarProductos() {
+    let p = JSON.parse(localStorage.getItem('productos'));
+    if (!p || p.length === 0) { localStorage.setItem('productos', JSON.stringify(DEFAULTS)); return DEFAULTS; }
+    return p;
+}
+
+const usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo'));
+if (usuarioActivo) {
+    document.getElementById('zona-usuario').innerHTML =
+        '<span style="color:#ff9800;font-weight:bold;">Hola, ' + usuarioActivo.nombre + '</span> ' +
+        '<button class="btn-salir" onclick="cerrarSesion()">Salir</button>';
+    document.getElementById('nav-admin').style.display = 'inline';
+
+    if (localStorage.getItem('recienLogueado')) {
+        const barra = document.getElementById('barra-bienvenida');
+        barra.textContent = 'Bienvenido de nuevo, ' + usuarioActivo.nombre + '!';
+        barra.style.display = 'block';
+        localStorage.removeItem('recienLogueado');
+        setTimeout(function() { barra.style.display = 'none'; }, 3500);
+    }
+}
+function cerrarSesion() {
+    localStorage.removeItem('usuarioActivo');
+    toast('Sesion cerrada. Hasta pronto!', 'info');
+    setTimeout(function() { window.location.reload(); }, 1000);
+}
+
+let previewItem = null;
+const previewContainer = document.getElementById('product-preview');
+
+function renderizarProductos() {
+    const productos = cargarProductos().slice(0, 4);
+    const grid = document.getElementById('main-grid');
+    grid.innerHTML = '';
+    productos.forEach(function(p) {
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.innerHTML =
+            '<img src="' + p.imagen + '" alt="' + p.nombre + '" />' +
+            '<h4>' + p.nombre + '</h4>' +
+            '<div class="price">' + parseFloat(p.precio).toFixed(2) + ' EUR</div>' +
+            '<button>Anadir al Carrito</button>';
+        div.querySelector('img').addEventListener('click', function() {
+            previewItem = p;
+            document.getElementById('preview-img').src = p.imagen;
+            document.getElementById('preview-name').textContent = p.nombre;
+            document.getElementById('preview-price').textContent = parseFloat(p.precio).toFixed(2) + ' EUR';
+            previewContainer.style.display = 'flex';
+        });
+        div.querySelector('button').addEventListener('click', function() { agregarCesta(p); });
+        grid.appendChild(div);
+    });
+}
+
+function agregarCesta(p) {
+    let cesta = JSON.parse(localStorage.getItem('cesta')) || [];
+    cesta.push({ nombre: p.nombre, precio: p.precio });
+    localStorage.setItem('cesta', JSON.stringify(cesta));
+    toast(p.nombre + ' anadido al carrito', 'exito');
+}
+
+document.getElementById('close-preview').addEventListener('click', function() { previewContainer.style.display = 'none'; });
+previewContainer.addEventListener('click', function(e) { if (e.target === previewContainer) previewContainer.style.display = 'none'; });
+document.getElementById('preview-add').addEventListener('click', function() {
+    if (previewItem) { agregarCesta(previewItem); previewContainer.style.display = 'none'; }
+});
+
+document.getElementById('search-input').addEventListener('keypress', function(e) {
+    if (e.key !== 'Enter') return;
+    const q = this.value.toLowerCase().trim();
+    const encontrado = cargarProductos().find(function(p) { return p.nombre.toLowerCase().includes(q); });
+    if (encontrado) {
+        previewItem = encontrado;
+        document.getElementById('preview-img').src = encontrado.imagen;
+        document.getElementById('preview-name').textContent = encontrado.nombre;
+        document.getElementById('preview-price').textContent = parseFloat(encontrado.precio).toFixed(2) + ' EUR';
+        previewContainer.style.display = 'flex';
+    } else {
+        toast('No se encontro: ' + q, 'error');
+    }
+    this.value = '';
+});
+
+renderizarProductos();
+</script>
+</body>
+</html>
