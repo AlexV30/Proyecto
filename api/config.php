@@ -20,9 +20,17 @@ function getDB(): PDO {
     return $pdo;
 }
 
-// Cabeceras para API JSON + CORS (necesario para fetch desde el frontend)
+// Cabeceras para API JSON + CORS
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+
+// Permitir el origen exacto que hace la peticion (necesario para cookies cross-IP)
+$origen = $_SERVER['HTTP_ORIGIN'] ?? '';
+if ($origen) {
+    header('Access-Control-Allow-Origin: ' . $origen);
+    header('Access-Control-Allow-Credentials: true');
+} else {
+    header('Access-Control-Allow-Origin: *');
+}
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
@@ -31,7 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Iniciar sesión PHP para guardar el usuario logueado
+// Configurar cookie de sesion para que funcione desde cualquier IP
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.cookie_httponly', '0');
+ini_set('session.cookie_path', '/');
 session_start();
 
 // Función helper para responder JSON
