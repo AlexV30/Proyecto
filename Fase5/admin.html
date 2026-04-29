@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Administracion - Campo Fresco</title>
+<link rel="stylesheet" href="style5.css" />
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div id="modal-confirmar">
+    <div class="modal-box">
+        <div style="font-size:3rem;margin-bottom:15px;">&#9888;</div>
+        <h3 id="modal-titulo">Eliminar producto?</h3>
+        <p id="modal-texto">Esta accion no se puede deshacer.</p>
+        <div class="modal-btns">
+            <button class="btn-si" id="btn-si">Si, eliminar</button>
+            <button class="btn-no" id="btn-no">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <h2>Campo Fresco</h2>
+        <p>Panel de Admin</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="index.html">Inicio</a>
+        <a href="productos.html">Tienda</a>
+        <div class="sep"></div>
+        <a href="admin.html" class="activo">Administracion</a>
+    </nav>
+    <div class="sidebar-usuario">
+        <div id="nombre-sb" class="nombre-sb">Cargando...</div>
+        <button class="btn-salir-sb" onclick="cerrarSesion()">Cerrar Sesion</button>
+    </div>
+</aside>
+
+<div class="main-content">
+    <div class="admin-topbar">
+        <h1>Gestion de Productos</h1>
+        <span id="info-total" style="color:#888;font-size:0.9rem;"></span>
+    </div>
+
+    <div class="admin-container">
+        <div class="form-card">
+            <h2 class="section-h" id="form-titulo">Anadir Nuevo Producto</h2>
+            <input type="hidden" id="prod-id" />
+            <div class="form-row">
+                <div class="fg">
+                    <label>Nombre *</label>
+                    <input type="text" id="prod-nombre" placeholder="Nombre del producto" />
+                    <span class="msg-e" id="err-nombre">El nombre es obligatorio.</span>
+                </div>
+                <div class="fg">
+                    <label>Precio (EUR) *</label>
+                    <input type="number" id="prod-precio" step="0.01" min="0.01" placeholder="2.50" />
+                    <span class="msg-e" id="err-precio">Introduce un precio valido.</span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="fg">
+                    <label>Categoria *</label>
+                    <select id="prod-cat">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="frutas">Frutas</option>
+                        <option value="verduras">Verduras</option>
+                        <option value="basicos">Basicos</option>
+                    </select>
+                    <span class="msg-e" id="err-cat">Selecciona una categoria.</span>
+                </div>
+                <div class="fg">
+                    <label>Ruta imagen</label>
+                    <input type="text" id="prod-img" placeholder="../Fase2/img/manzanas.PNG" />
+                </div>
+            </div>
+            <div class="fg" style="margin-bottom:14px;">
+                <label>Descripcion</label>
+                <input type="text" id="prod-desc" placeholder="Descripcion corta del producto" />
+            </div>
+            <div class="form-btns">
+                <button class="btn-verde" onclick="guardar()">Guardar Producto</button>
+                <button class="btn-gris" id="btn-cancelar" style="display:none;" onclick="cancelar()">Cancelar edicion</button>
+            </div>
+        </div>
+
+        <div class="tabla-card">
+            <h2 class="section-h">Productos (<span id="num-prod">0</span>)</h2>
+            <table>
+                <thead><tr><th>ID</th><th>Img</th><th>Nombre</th><th>Precio</th><th>Categoria</th><th>Descripcion</th><th>Acciones</th></tr></thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function toast(msg, tipo) {
+    tipo = tipo || 'exito';
+    const c = document.getElementById('toast');
+    const d = document.createElement('div');
+    d.className = 'toast-msg toast-' + tipo;
+    d.textContent = msg;
+    c.appendChild(d);
+    setTimeout(function() { d.style.opacity='0'; d.style.transition='opacity 0.4s'; setTimeout(function(){d.remove();},400); }, 2800);
+}
+
+const DEFAULTS = [
+    { id:1, nombre:"Manzanas Ecologicas", precio:3.99, categoria:"frutas", descripcion:"Sin pesticidas.", imagen:"../Fase2/img/manzanas.PNG" },
+    { id:2, nombre:"Zanahorias Organicas", precio:2.49, categoria:"verduras", descripcion:"De la huerta.", imagen:"../Fase2/img/zanahorias.png" },
+    { id:3, nombre:"Lechuga Fresca", precio:1.99, categoria:"verduras", descripcion:"Cosechada hoy.", imagen:"../Fase2/img/lechuga.png" },
+    { id:4, nombre:"Fresas Frescas", precio:4.99, categoria:"frutas", descripcion:"Dulces y jugosas.", imagen:"../Fase2/img/fresas.png" },
+    { id:5, nombre:"Brocoli", precio:1.85, categoria:"verduras", descripcion:"100% organico.", imagen:"../Fase2/img/brocoli.png" },
+    { id:6, nombre:"Tomates Ecologicos", precio:2.60, categoria:"verduras", descripcion:"Jugosos.", imagen:"../Fase2/img/tomates.png" },
+    { id:7, nombre:"Uvas Ecologicas", precio:3.50, categoria:"frutas", descripcion:"Snack natural.", imagen:"../Fase2/img/uvas.png" },
+    { id:8, nombre:"Arroz Integral", precio:2.40, categoria:"basicos", descripcion:"Alto en fibra.", imagen:"../Fase2/img/arroz.png" },
+    { id:9, nombre:"Huevos Ecologicos", precio:3.90, categoria:"basicos", descripcion:"Gallinas libres.", imagen:"../Fase2/img/huevos.png" },
+    { id:10, nombre:"Lentejas Ecologicas", precio:2.10, categoria:"basicos", descripcion:"Proteina vegetal.", imagen:"../Fase2/img/lentejas.png" }
+];
+
+const usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo'));
+if (!usuarioActivo) { window.location.href = 'login.html'; }
+else { document.getElementById('nombre-sb').textContent = usuarioActivo.nombre; }
+
+function cerrarSesion() { localStorage.removeItem('usuarioActivo'); window.location.href = 'login.html'; }
+
+function cargarProductos() {
+    let p = JSON.parse(localStorage.getItem('productos'));
+    if (!p || p.length === 0) { localStorage.setItem('productos', JSON.stringify(DEFAULTS)); return DEFAULTS; }
+    return p;
+}
+function guardarProductos(p) { localStorage.setItem('productos', JSON.stringify(p)); }
+
+let callbackConfirmar = null;
+function confirmar(titulo, texto, cb) {
+    document.getElementById('modal-titulo').textContent = titulo;
+    document.getElementById('modal-texto').textContent = texto;
+    callbackConfirmar = cb;
+    document.getElementById('modal-confirmar').style.display = 'flex';
+}
+document.getElementById('btn-si').onclick = function() {
+    document.getElementById('modal-confirmar').style.display = 'none';
+    if (callbackConfirmar) callbackConfirmar();
+};
+document.getElementById('btn-no').onclick = function() {
+    document.getElementById('modal-confirmar').style.display = 'none';
+    toast('Eliminacion cancelada', 'info');
+};
+
+function cargarTabla() {
+    const productos = cargarProductos();
+    document.getElementById('num-prod').textContent = productos.length;
+    document.getElementById('info-total').textContent = productos.length + ' productos';
+    const tb = document.getElementById('tbody');
+    tb.innerHTML = '';
+    if (!productos.length) {
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#bbb;">No hay productos.</td></tr>';
+        return;
+    }
+    productos.forEach(function(p) {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td style="color:#999;">' + p.id + '</td>' +
+            '<td><img src="' + p.imagen + '" alt="' + p.nombre + '" onerror="this.style.opacity=0.2" /></td>' +
+            '<td><strong>' + p.nombre + '</strong></td>' +
+            '<td>' + parseFloat(p.precio).toFixed(2) + ' EUR</td>' +
+            '<td><span class="badge badge-' + p.categoria + '">' + p.categoria + '</span></td>' +
+            '<td style="color:#888;">' + (p.descripcion || '-') + '</td>' +
+            '<td>' +
+                '<button class="btn-editar" onclick="editar(' + p.id + ')">Editar</button>' +
+                '<button class="btn-borrar" onclick="eliminar(' + p.id + ',\'' + p.nombre.replace(/'/g, "\\'") + '\')">Borrar</button>' +
+            '</td>';
+        tb.appendChild(tr);
+    });
+}
+
+function guardar() {
+    ['err-nombre','err-precio','err-cat'].forEach(function(id){ document.getElementById(id).classList.remove('v'); });
+    ['prod-nombre','prod-precio','prod-cat'].forEach(function(id){ document.getElementById(id).classList.remove('error'); });
+
+    const nombre = document.getElementById('prod-nombre').value.trim();
+    const precio = parseFloat(document.getElementById('prod-precio').value);
+    const cat    = document.getElementById('prod-cat').value;
+    const img    = document.getElementById('prod-img').value.trim();
+    const desc   = document.getElementById('prod-desc').value.trim();
+    const id     = document.getElementById('prod-id').value;
+
+    let err = false;
+    if (!nombre) { document.getElementById('prod-nombre').classList.add('error'); document.getElementById('err-nombre').classList.add('v'); err=true; }
+    if (isNaN(precio) || precio <= 0) { document.getElementById('prod-precio').classList.add('error'); document.getElementById('err-precio').classList.add('v'); err=true; }
+    if (!cat) { document.getElementById('prod-cat').classList.add('error'); document.getElementById('err-cat').classList.add('v'); err=true; }
+    if (err) return;
+
+    let productos = cargarProductos();
+    if (id) {
+        const idx = productos.findIndex(function(p) { return p.id == id; });
+        if (idx !== -1) {
+            productos[idx] = { id: parseInt(id), nombre: nombre, precio: precio, categoria: cat, imagen: img || productos[idx].imagen, descripcion: desc };
+            toast('Producto actualizado', 'exito');
+        }
+    } else {
+        const nuevoId = productos.length ? Math.max.apply(null, productos.map(function(p){ return p.id; })) + 1 : 1;
+        productos.push({ id: nuevoId, nombre: nombre, precio: precio, categoria: cat, imagen: img || '../Fase2/img/manzanas.PNG', descripcion: desc });
+        toast('Producto anadido', 'exito');
+    }
+    guardarProductos(productos);
+    limpiar();
+    cargarTabla();
+}
+
+function editar(id) {
+    const p = cargarProductos().find(function(p) { return p.id === id; });
+    if (!p) { toast('Producto no encontrado', 'error'); return; }
+    document.getElementById('form-titulo').textContent = 'Editando: ' + p.nombre;
+    document.getElementById('prod-id').value = p.id;
+    document.getElementById('prod-nombre').value = p.nombre;
+    document.getElementById('prod-precio').value = p.precio;
+    document.getElementById('prod-cat').value = p.categoria;
+    document.getElementById('prod-img').value = p.imagen;
+    document.getElementById('prod-desc').value = p.descripcion || '';
+    document.getElementById('btn-cancelar').style.display = 'inline-block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast('Editando "' + p.nombre + '"', 'info');
+}
+
+function eliminar(id, nombre) {
+    confirmar('Eliminar producto?', 'Vas a eliminar "' + nombre + '". Esta accion no se puede deshacer.',
+        function() {
+            let productos = cargarProductos().filter(function(p) { return p.id !== id; });
+            guardarProductos(productos);
+            toast('"' + nombre + '" eliminado', 'info');
+            cargarTabla();
+        }
+    );
+}
+
+function cancelar() { limpiar(); toast('Edicion cancelada', 'info'); }
+
+function limpiar() {
+    document.getElementById('form-titulo').textContent = 'Anadir Nuevo Producto';
+    document.getElementById('prod-id').value = '';
+    ['prod-nombre','prod-precio','prod-img','prod-desc'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('prod-cat').value = '';
+    document.getElementById('btn-cancelar').style.display = 'none';
+}
+
+cargarTabla();
+</script>
+</body>
+</html>

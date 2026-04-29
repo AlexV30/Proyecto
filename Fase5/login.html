@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Acceder - Campo Fresco</title>
+<link rel="stylesheet" href="style5.css" />
+</head>
+<body class="pagina-login">
+
+<div class="login-box">
+    <div class="logo">
+        <h1>Campo Fresco</h1>
+        <p>Tu tienda ecologica de confianza</p>
+    </div>
+    <div class="tabs">
+        <div class="tab activo" id="tab-login" onclick="cambiarTab('login')">Iniciar Sesion</div>
+        <div class="tab" id="tab-registro" onclick="cambiarTab('registro')">Crear Cuenta</div>
+    </div>
+
+    <div class="formulario activo" id="form-login">
+        <div id="alerta-login" class="alerta"></div>
+        <div class="form-grupo">
+            <label>Correo electronico</label>
+            <input type="email" id="login-email" placeholder="tu@email.com" />
+            <span class="msg-error" id="err-login-email">Introduce un email valido.</span>
+        </div>
+        <div class="form-grupo">
+            <label>Contrasena</label>
+            <input type="password" id="login-password" placeholder="Tu contrasena" />
+            <span class="msg-error" id="err-login-pass">La contrasena no puede estar vacia.</span>
+        </div>
+        <button class="btn-submit" onclick="iniciarSesion()">Entrar</button>
+    </div>
+
+    <div class="formulario" id="form-registro">
+        <div id="alerta-registro" class="alerta"></div>
+        <div class="form-grupo">
+            <label>Nombre completo</label>
+            <input type="text" id="reg-nombre" placeholder="Tu nombre y apellidos" />
+            <span class="msg-error" id="err-reg-nombre">El nombre debe tener al menos 2 caracteres.</span>
+        </div>
+        <div class="form-grupo">
+            <label>Correo electronico</label>
+            <input type="email" id="reg-email" placeholder="tu@email.com" />
+            <span class="msg-error" id="err-reg-email">Introduce un email valido.</span>
+        </div>
+        <div class="form-grupo">
+            <label>Contrasena (min. 6 caracteres)</label>
+            <input type="password" id="reg-pass" placeholder="Crea una contrasena" />
+            <span class="msg-error" id="err-reg-pass">Minimo 6 caracteres.</span>
+        </div>
+        <div class="form-grupo">
+            <label>Confirmar contrasena</label>
+            <input type="password" id="reg-pass2" placeholder="Repite la contrasena" />
+            <span class="msg-error" id="err-reg-pass2">Las contrasenas no coinciden.</span>
+        </div>
+        <button class="btn-submit" onclick="registrarUsuario()">Crear cuenta</button>
+    </div>
+
+    <div class="volver"><a href="index.html">Volver a la tienda</a></div>
+</div>
+
+<script>
+function cambiarTab(cual) {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('activo'); });
+    document.querySelectorAll('.formulario').forEach(function(f) { f.classList.remove('activo'); });
+    document.getElementById('tab-' + cual).classList.add('activo');
+    document.getElementById('form-' + cual).classList.add('activo');
+    document.querySelectorAll('.msg-error').forEach(function(e) { e.classList.remove('visible'); });
+    document.querySelectorAll('input').forEach(function(i) { i.classList.remove('error', 'ok'); });
+    document.querySelectorAll('.alerta').forEach(function(a) { a.className = 'alerta'; a.textContent = ''; });
+}
+function mostrarError(iId, eId) {
+    document.getElementById(iId).classList.add('error');
+    document.getElementById(eId).classList.add('visible');
+}
+function iniciarSesion() {
+    document.querySelectorAll('#form-login .msg-error').forEach(function(e) { e.classList.remove('visible'); });
+    document.querySelectorAll('#form-login input').forEach(function(i) { i.classList.remove('error','ok'); });
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-password').value;
+    let err = false;
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { mostrarError('login-email','err-login-email'); err=true; }
+    if (!pass) { mostrarError('login-password','err-login-pass'); err=true; }
+    if (err) return;
+    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    const usuario = usuarios.find(function(u) { return u.email === email && u.password === pass; });
+    const alerta = document.getElementById('alerta-login');
+    if (usuario) {
+        localStorage.setItem('usuarioActivo', JSON.stringify(usuario));
+        localStorage.setItem('recienLogueado', 'true');
+        alerta.textContent = 'Bienvenido, ' + usuario.nombre + '! Redirigiendo...';
+        alerta.className = 'alerta exito';
+        setTimeout(function() { window.location.href = 'index.html'; }, 1500);
+    } else {
+        alerta.textContent = 'Email o contrasena incorrectos.';
+        alerta.className = 'alerta fallo';
+    }
+}
+function registrarUsuario() {
+    document.querySelectorAll('#form-registro .msg-error').forEach(function(e) { e.classList.remove('visible'); });
+    document.querySelectorAll('#form-registro input').forEach(function(i) { i.classList.remove('error','ok'); });
+    const nombre = document.getElementById('reg-nombre').value.trim();
+    const email  = document.getElementById('reg-email').value.trim();
+    const pass   = document.getElementById('reg-pass').value;
+    const pass2  = document.getElementById('reg-pass2').value;
+    let err = false;
+    if (nombre.length < 2) { mostrarError('reg-nombre','err-reg-nombre'); err=true; }
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { mostrarError('reg-email','err-reg-email'); err=true; }
+    if (pass.length < 6) { mostrarError('reg-pass','err-reg-pass'); err=true; }
+    if (pass !== pass2) { mostrarError('reg-pass2','err-reg-pass2'); err=true; }
+    if (err) return;
+    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    if (usuarios.find(function(u) { return u.email === email; })) {
+        const a = document.getElementById('alerta-registro');
+        a.textContent = 'Este email ya esta registrado.';
+        a.className = 'alerta fallo';
+        mostrarError('reg-email','err-reg-email');
+        return;
+    }
+    usuarios.push({ nombre: nombre, email: email, password: pass });
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    const a = document.getElementById('alerta-registro');
+    a.textContent = 'Cuenta creada! Ahora puedes iniciar sesion.';
+    a.className = 'alerta exito';
+    setTimeout(function() { cambiarTab('login'); document.getElementById('login-email').value = email; }, 1800);
+}
+if (localStorage.getItem('usuarioActivo')) { window.location.href = 'index.html'; }
+</script>
+</body>
+</html>

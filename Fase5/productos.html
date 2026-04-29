@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tienda - Campo Fresco</title>
+<link rel="stylesheet" href="style5.css" />
+</head>
+<body>
+
+<div id="toast"></div>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <h2>Campo Fresco</h2>
+        <p>Tienda Ecologica</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="index.html">Inicio</a>
+        <a href="productos.html" class="activo">Tienda</a>
+        <div class="sep"></div>
+        <a href="index.html#seccion-nosotros">Quienes somos</a>
+        <a href="admin.html" id="link-admin" style="display:none;">Administracion</a>
+    </nav>
+    <div class="sidebar-usuario">
+        <div id="nombre-sb" class="nombre-sb">Sin sesion</div>
+        <div id="botones-sb">
+            <a href="login.html" style="color:#ff9800;font-size:0.84rem;text-decoration:none;">Iniciar Sesion</a>
+        </div>
+    </div>
+</aside>
+
+<div class="main-content">
+    <div class="topbar">
+        <h2 style="font-size:1.1rem;color:#1b5e20;">Tienda Ecologica</h2>
+        <div class="topbar-right">
+            <input type="text" id="buscador" placeholder="Buscar producto..." />
+            <button id="btnCesta">Cesta (<span id="contador">0</span>)</button>
+        </div>
+    </div>
+
+    <div class="filtros-zona">
+        <span>Filtrar:</span>
+        <button class="filtro-btn activo" data-cat="todos" onclick="filtrar(this)">Todos</button>
+        <button class="filtro-btn" data-cat="frutas" onclick="filtrar(this)">Frutas</button>
+        <button class="filtro-btn" data-cat="verduras" onclick="filtrar(this)">Verduras</button>
+        <button class="filtro-btn" data-cat="basicos" onclick="filtrar(this)">Basicos</button>
+    </div>
+
+    <div class="tienda-container" id="contenido"></div>
+
+    <div id="panelCesta">
+        <h2>Mi Cesta</h2>
+        <ul id="listaCesta"></ul>
+        <div id="total-cesta"></div>
+        <button onclick="cerrarCesta()" style="margin-top:12px;width:100%;padding:10px;background:#f5f5f5;color:#555;border:none;border-radius:7px;cursor:pointer;">Cerrar</button>
+    </div>
+
+    <footer>
+        <p>2026 Campo Fresco - Alex Valls - iMES - Proyecto Intermodular</p>
+    </footer>
+</div>
+
+<script>
+function toast(msg, tipo) {
+    tipo = tipo || 'exito';
+    const c = document.getElementById('toast');
+    const d = document.createElement('div');
+    d.className = 'toast-msg toast-' + tipo;
+    d.textContent = msg;
+    c.appendChild(d);
+    setTimeout(function() { d.style.opacity='0'; d.style.transition='opacity 0.4s'; setTimeout(function(){d.remove();},400); }, 2800);
+}
+
+const DEFAULTS = [
+    { id:1, nombre:"Manzanas Ecologicas", precio:3.99, categoria:"frutas", descripcion:"Sin pesticidas, directas del arbol.", imagen:"../Fase2/img/manzanas.PNG" },
+    { id:2, nombre:"Zanahorias Organicas", precio:2.49, categoria:"verduras", descripcion:"De la huerta al plato.", imagen:"../Fase2/img/zanahorias.png" },
+    { id:3, nombre:"Lechuga Fresca", precio:1.99, categoria:"verduras", descripcion:"Cosechada esta manana.", imagen:"../Fase2/img/lechuga.png" },
+    { id:4, nombre:"Fresas Frescas", precio:4.99, categoria:"frutas", descripcion:"Dulces y jugosas.", imagen:"../Fase2/img/fresas.png" },
+    { id:5, nombre:"Brocoli", precio:1.85, categoria:"verduras", descripcion:"100% organico.", imagen:"../Fase2/img/brocoli.png" },
+    { id:6, nombre:"Tomates Ecologicos", precio:2.60, categoria:"verduras", descripcion:"Jugosos y naturales.", imagen:"../Fase2/img/tomates.png" },
+    { id:7, nombre:"Uvas Ecologicas", precio:3.50, categoria:"frutas", descripcion:"Snack natural.", imagen:"../Fase2/img/uvas.png" },
+    { id:8, nombre:"Arroz Integral", precio:2.40, categoria:"basicos", descripcion:"Alto en fibra.", imagen:"../Fase2/img/arroz.png" },
+    { id:9, nombre:"Huevos Ecologicos", precio:3.90, categoria:"basicos", descripcion:"Gallinas en libertad.", imagen:"../Fase2/img/huevos.png" },
+    { id:10, nombre:"Lentejas Ecologicas", precio:2.10, categoria:"basicos", descripcion:"Proteina vegetal.", imagen:"../Fase2/img/lentejas.png" }
+];
+
+function cargarProductos() {
+    let p = JSON.parse(localStorage.getItem('productos'));
+    if (!p || p.length === 0) { localStorage.setItem('productos', JSON.stringify(DEFAULTS)); return DEFAULTS; }
+    return p;
+}
+
+const usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo'));
+if (usuarioActivo) {
+    document.getElementById('nombre-sb').textContent = usuarioActivo.nombre;
+    document.getElementById('botones-sb').innerHTML = '<button class="btn-salir-sb" onclick="cerrarSesion()">Cerrar Sesion</button>';
+    document.getElementById('link-admin').style.display = 'flex';
+}
+function cerrarSesion() { localStorage.removeItem('usuarioActivo'); window.location.reload(); }
+
+let catActual = 'todos', busqueda = '';
+
+function filtrar(btn) {
+    document.querySelectorAll('.filtro-btn').forEach(function(b) { b.classList.remove('activo'); });
+    btn.classList.add('activo');
+    catActual = btn.dataset.cat;
+    renderizar();
+}
+
+function renderizar() {
+    let productos = cargarProductos();
+    if (catActual !== 'todos') productos = productos.filter(function(p) { return p.categoria === catActual; });
+    if (busqueda) productos = productos.filter(function(p) { return p.nombre.toLowerCase().includes(busqueda) || (p.descripcion||'').toLowerCase().includes(busqueda); });
+
+    const cont = document.getElementById('contenido');
+    cont.innerHTML = '';
+
+    if (!productos.length) {
+        cont.innerHTML = '<div class="sin-res">No se encontraron productos con esos criterios.</div>';
+        return;
+    }
+
+    if (catActual === 'todos' && !busqueda) {
+        const cats = { frutas:'Frutas del Sol', verduras:'Verduras de la Huerta', basicos:'Basicos Ecologicos' };
+        Object.keys(cats).forEach(function(cat) {
+            const prods = productos.filter(function(p) { return p.categoria === cat; });
+            if (!prods.length) return;
+            const h2 = document.createElement('h2'); h2.className='section-title'; h2.textContent=cats[cat]; cont.appendChild(h2);
+            cont.appendChild(crearGrid(prods));
+        });
+    } else {
+        const h2 = document.createElement('h2'); h2.className='section-title'; h2.textContent='Resultados (' + productos.length + ')'; cont.appendChild(h2);
+        cont.appendChild(crearGrid(productos));
+    }
+}
+
+function crearGrid(prods) {
+    const g = document.createElement('div'); g.className='grid';
+    prods.forEach(function(p) {
+        const c = document.createElement('div'); c.className='card';
+        c.innerHTML = '<img src="' + p.imagen + '" alt="' + p.nombre + '" onerror="this.style.display=\'none\'">' +
+            '<div class="card-body"><h3>' + p.nombre + '</h3><p>' + (p.descripcion||'') + '</p>' +
+            '<div class="price-row"><span class="price">' + parseFloat(p.precio).toFixed(2) + ' EUR</span>' +
+            '<button class="btn-buy" data-nombre="' + p.nombre + '" data-precio="' + p.precio + '">Anadir</button>' +
+            '</div></div>';
+        g.appendChild(c);
+    });
+    g.querySelectorAll('.btn-buy').forEach(function(btn) {
+        btn.onclick = function() {
+            let cesta = JSON.parse(localStorage.getItem('cesta')) || [];
+            cesta.push({ nombre: btn.dataset.nombre, precio: btn.dataset.precio });
+            localStorage.setItem('cesta', JSON.stringify(cesta));
+            actualizarContador();
+            toast(btn.dataset.nombre + ' anadido al carrito', 'exito');
+        };
+    });
+    return g;
+}
+
+document.getElementById('buscador').addEventListener('input', function() {
+    busqueda = this.value.toLowerCase().trim();
+    renderizar();
+});
+
+function actualizarContador() {
+    document.getElementById('contador').textContent = (JSON.parse(localStorage.getItem('cesta')) || []).length;
+}
+function renderizarCesta() {
+    const cesta = JSON.parse(localStorage.getItem('cesta')) || [];
+    const lista = document.getElementById('listaCesta');
+    lista.innerHTML = '';
+    let total = 0;
+    if (!cesta.length) lista.innerHTML = '<li style="color:#bbb;text-align:center;padding:20px;">La cesta esta vacia</li>';
+    cesta.forEach(function(item, i) {
+        total += parseFloat(item.precio);
+        const li = document.createElement('li');
+        li.innerHTML = '<span>' + item.nombre + '</span><span>' + parseFloat(item.precio).toFixed(2) + 'EUR <button class="btn-rm" data-i="' + i + '">X</button></span>';
+        lista.appendChild(li);
+    });
+    lista.querySelectorAll('.btn-rm').forEach(function(b) {
+        b.onclick = function() {
+            let c = JSON.parse(localStorage.getItem('cesta')) || [];
+            c.splice(parseInt(b.dataset.i), 1);
+            localStorage.setItem('cesta', JSON.stringify(c));
+            actualizarContador(); renderizarCesta();
+        };
+    });
+    document.getElementById('total-cesta').textContent = cesta.length ? 'Total: ' + total.toFixed(2) + 'EUR' : '';
+}
+document.getElementById('btnCesta').onclick = function() {
+    document.getElementById('panelCesta').style.right = '0'; renderizarCesta();
+};
+function cerrarCesta() { document.getElementById('panelCesta').style.right = '-380px'; }
+
+actualizarContador();
+renderizar();
+</script>
+</body>
+</html>
