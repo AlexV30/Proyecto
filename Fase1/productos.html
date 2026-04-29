@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda Premium - Productos del Campo</title>
+  <style>
+    :root {
+      --verde-oscuro: #1b5e20;
+      --verde-medio: #2f7d32;
+      --naranja: #ff9800;
+      --gris-claro: #f4f4f4;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--gris-claro); color: #333; line-height: 1.6; }
+
+    header {
+      background: var(--verde-medio);
+      padding: 15px 40px;
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .nav { display: flex; justify-content: space-between; align-items: center; }
+    .nav ul { list-style: none; display: flex; gap: 20px; }
+    .nav a { color: #fff; text-decoration: none; font-weight: bold; }
+    .nav a:hover { color: var(--naranja); }
+
+    .shop-hero {
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+      url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1350&q=80') center/cover;
+      height: 250px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+    .section-title {
+      font-size: 1.8rem;
+      color: var(--verde-oscuro);
+      margin-bottom: 30px;
+      border-left: 5px solid var(--naranja);
+      padding-left: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      transition: 0.3s;
+    }
+    .card:hover { transform: translateY(-10px); }
+
+    .card img { width: 100%; height: 220px; object-fit: cover; }
+
+    .card-body { padding: 20px; }
+    .card h3 { margin-bottom: 10px; color: #222; font-size: 1.3rem; }
+    .card p { font-size: 0.9rem; color: #666; margin-bottom: 15px; height: 40px; }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .price { font-size: 1.4rem; font-weight: bold; color: var(--verde-medio); }
+
+    .btn-buy {
+      background: var(--naranja);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn-buy:hover { background: #e68a00; }
+
+    footer {
+      background: var(--verde-oscuro);
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+
+    /* CESTA */
+    #panelCesta {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100%;
+      background: #f9f9f9;
+      box-shadow: -6px 0 20px rgba(0,0,0,0.25);
+      padding: 25px;
+      transition: 0.3s;
+      z-index: 2000;
+      overflow-y: auto;
+      border-left: 5px solid var(--naranja);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <nav class="nav">
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="productos.html">Tienda</a></li>
+      <li><a href="index.html#seccion-nosotros">Nosotros</a></li>
+    </ul>
+
+    <button id="btnCesta" style="background:none;border:none;color:white;font-weight:bold;cursor:pointer;">
+      🛒 Mi Cesta (<span id="contador">0</span>)
+    </button>
+  </nav>
+</header>
+
+<div id="panelCesta">
+  <h2>Mi Cesta</h2>
+  <ul id="listaCesta"></ul>
+  <button onclick="cerrarCesta()">Cerrar</button>
+</div>
+
+<section class="shop-hero">
+  <h1>Nuestra Cosecha Fresca</h1>
+  <p>Calidad garantizada del campo a tu hogar</p>
+</section>
+
+<div class="container">
+
+  <h2 class="section-title">Frutas del Sol</h2>
+  <div class="grid">
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=600&q=80">
+      <div class="card-body">
+        <h3>Fresas</h3>
+        <p>Dulces, rojas y llenas de vitaminas.</p>
+        <div class="price-row">
+          <span class="price">4,90€</span>
+          <button class="btn-buy" data-nombre="Fresas" data-precio="4.90">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?auto=format&fit=crop&w=600&q=80">
+      <div class="card-body">
+        <h3>Manzanas ecológicas</h3>
+        <p>Crujientes y sin pesticidas.</p>
+        <div class="price-row">
+          <span class="price">3,10€</span>
+          <button class="btn-buy" data-nombre="Manzanas ecológicas" data-precio="3.10">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2 class="section-title">Verduras de la Huerta</h2>
+  <div class="grid">
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?auto=format&fit=crop&w=600&q=80">
+      <div class="card-body">
+        <h3>Brócoli</h3>
+        <p>100% orgánico.</p>
+        <div class="price-row">
+          <span class="price">1,85€</span>
+          <button class="btn-buy" data-nombre="Brócoli" data-precio="1.85">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1607305387299-a3d9611cd469?auto=format&fit=crop&w=600&q=80">
+      <div class="card-body">
+        <h3>Tomates ecológicos</h3>
+        <p>Jugosos de huerta natural.</p>
+        <div class="price-row">
+          <span class="price">2,60€</span>
+          <button class="btn-buy" data-nombre="Tomates ecológicos" data-precio="2.60">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2 class="section-title">Básicos Ecológicos</h2>
+  <div class="grid">
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=600&q=80">
+      <div class="card-body">
+        <h3>Arroz integral</h3>
+        <p>Alto en fibra y ecológico.</p>
+        <div class="price-row">
+          <span class="price">2,40€</span>
+          <button class="btn-buy" data-nombre="Arroz integral" data-precio="2.40">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1604909052743-94e8382f0a2f?auto=format&fit=crop&w=600&q=80">
+      <div class="card-body">
+        <h3>Huevos ecológicos</h3>
+        <p>Gallinas en libertad.</p>
+        <div class="price-row">
+          <span class="price">3,90€</span>
+          <button class="btn-buy" data-nombre="Huevos ecológicos" data-precio="3.90">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 Productos del Campo</p>
+</footer>
+
+<script>
+let cesta = JSON.parse(localStorage.getItem("cesta")) || [];
+
+const botones = document.querySelectorAll(".btn-buy");
+const contador = document.getElementById("contador");
+const lista = document.getElementById("listaCesta");
+const panel = document.getElementById("panelCesta");
+const btnCesta = document.getElementById("btnCesta");
+
+function actualizarContador() {
+  contador.textContent = cesta.length;
+}
+
+function renderizarCesta() {
+  lista.innerHTML = "";
+  cesta.forEach((p, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `${p.nombre} - ${p.precio}€ <button data-index="${i}">X</button>`;
+    lista.appendChild(li);
+  });
+
+  lista.querySelectorAll("button").forEach(b => {
+    b.onclick = () => {
+      cesta.splice(b.dataset.index, 1);
+      localStorage.setItem("cesta", JSON.stringify(cesta));
+      renderizarCesta();
+      actualizarContador();
+    };
+  });
+}
+
+btnCesta.onclick = () => {
+  panel.style.right = "0";
+  renderizarCesta();
+};
+
+function cerrarCesta() {
+  panel.style.right = "-400px";
+}
+
+botones.forEach(b => {
+  b.onclick = () => {
+    cesta.push({ nombre: b.dataset.nombre, precio: b.dataset.precio });
+    localStorage.setItem("cesta", JSON.stringify(cesta));
+    actualizarContador();
+  };
+});
+
+actualizarContador();
+</script>
+
+</body>
+</html>

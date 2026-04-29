@@ -1,0 +1,278 @@
+<!DOCTYPE html> 
+<html lang="es"> 
+<head> 
+<meta charset="UTF-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+<title>Productos Frescos del Campo</title> 
+<style> 
+html { scroll-behavior:smooth; } 
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial, Helvetica, sans
+serif; } 
+body { background:#f7f7f7; color:#333; } 
+header { background:#2f7d32; padding:15px 40px; color:#fff; position:sticky; 
+top:0; z-index:900; } 
+.nav { display:flex; justify-content:space-between; align-items:center; } 
+.nav ul { list-style:none; display:flex; gap:20px; } 
+.nav a { color:#fff; text-decoration:none; font-weight:bold; } 
+.search-login { display:flex; gap:15px; align-items:center; } 
+.search-login input { padding:6px 10px; border-radius:4px; border:none; } 
+
+/**fondo**/
+.hero { background:url('img/fondo-granja.png') center/cover no-repeat; padding:100px 40px; color:#fff; text
+
+align:center; } 
+.hero h1 { font-size:2.8rem; margin-bottom:20px; } 
+.hero p { max-width:700px; margin:0 auto 30px; font-size:1.1rem; } 
+.btn { background:#ff9800; color:#fff; padding:12px 25px; text-decoration:none; 
+border-radius:6px; font-weight:bold; border:none; cursor:pointer; display:inline
+block; transition:background 0.3s; } 
+.btn:hover { background:#e68a00; } 
+section { scroll-margin-top:80px; } 
+.features { display:grid; grid-template-columns:repeat(auto-fit, 
+minmax(200px,1fr)); gap:20px; padding:50px 40px; background:#fff; text
+align:center; } 
+.feature { padding:20px; } 
+.feature h3 { margin-bottom:10px; color:#2f7d32; } 
+.products { padding:60px 40px; } 
+.products h2 { text-align:center; margin-bottom:40px; } 
+.product-grid { display:grid; grid-template-columns:repeat(auto
+f
+it,minmax(220px,1fr)); gap:25px; } 
+.product { background:#fff; border-radius:8px; padding:15px; text-align:center; 
+box-shadow:0 2px 8px rgba(0,0,0,0.1); } 
+.product img { width:100%; height:160px; object-fit:cover; border-radius:6px; 
+margin-bottom:15px; cursor:pointer; } 
+.product h4 { margin-bottom:8px; } 
+.price { font-weight:bold; margin-bottom:12px; color:#2f7d32; } 
+.product button { background:#2f7d32; color:#fff; border:none; padding:10px 
+15px; border-radius:5px; cursor:pointer; } 
+.cta { background:#2f7d32; color:#fff; text-align:center; padding:70px 40px; } 
+.cta h2 { margin-bottom:20px; } 
+footer { background:#1b5e20; color:#fff; text-align:center; padding:15px; } 
+#toggle-registro { display:none; } 
+.modal-registro { display:none; position:fixed; z-index:1000; left:0; top:0; 
+width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; 
+align-items:center; } 
+.modal-content { background:#fff; padding:30px; border-radius:10px; 
+width:320px; position:relative; text-align:center; color:#333; } 
+.modal-content h2 { margin-bottom:15px; color:#2f7d32; } 
+.modal-content input { width:100%; padding:10px; margin:8px 0; border:1px solid 
+#ccc; border-radius:4px; } 
+.close-btn { position:absolute; top:5px; right:15px; font-size:28px; cursor:pointer; 
+color:#888; } 
+  #toggle-registro:checked ~ .modal-registro { display:flex; } 
+  #product-preview { display:none; position:fixed; z-index:10000; left:0; top:0; 
+width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; 
+align-items:center; } 
+  #preview-content { background:#fff; border-radius:10px; padding:20px; max
+width:500px; text-align:center; position:relative; } 
+  #preview-content img { width:100%; max-height:300px; object-fit:cover; border
+radius:6px; margin-bottom:15px; } 
+  #close-preview { position:absolute; top:10px; right:15px; font-size:30px; 
+color:#333; cursor:pointer; } 
+  @media (max-width:600px){ .hero h1{ font-size:2rem; } } 
+</style> 
+</head> 
+<body id="inicio"> 
+ 
+<input type="checkbox" id="toggle-registro"> 
+ 
+<header> 
+  <nav class="nav"> 
+    <ul> 
+      <li><a href="#inicio">Inicio</a></li> 
+      <li><a href="#seccion-productos">Productos</a></li> 
+      <li><a href="#seccion-nosotros">Quiénes Somos</a></li> 
+    </ul> 
+    <div class="search-login"> 
+      <input type="text" placeholder="Buscar productos..." id="search-input" /> 
+      <label for="toggle-registro" style="cursor:pointer; font-weight:bold;">Iniciar 
+Sesión</label> 
+    </div> 
+  </nav> 
+</header> 
+ 
+<div class="modal-registro"> 
+  <div class="modal-content"> 
+    <label for="toggle-registro" class="close-btn">&times;</label> 
+    <h2>Crear cuenta</h2> 
+    <form id="form-registro"> 
+      <input type="text" placeholder="Nombre completo" required> 
+      <input type="email" placeholder="Correo electrónico" required> 
+      <input type="password" placeholder="Contraseña" required> 
+      <button type="submit" class="btn" style="width:100%; margin
+top:10px;">Registrarse</button> 
+    </form> 
+  </div> 
+</div> 
+ 
+<section class="hero"> 
+  <h1>Productos Frescos del Campo Directo a tu Mesa</h1> 
+  <p>Descubre la mejor selección de vegetales, frutas, hortalizas, cereales y 
+legumbres cultivados de forma natural y sostenible.</p> 
+  <a href="#seccion-productos" class="btn">Ver Todos los Productos</a> 
+</section> 
+ 
+<section class="features" id="seccion-nosotros"> 
+  <div class="feature"> 
+    <h3>100% Natural</h3> 
+    <p>Productos cultivados sin químicos</p> 
+  </div> 
+  <div class="feature"> 
+    <h3>Entrega Rápida</h3> 
+    <p>Recibe tus productos frescos en casa</p> 
+  </div> 
+  <div class="feature"> 
+    <h3>Calidad Garantizada</h3> 
+    <p>Selección cuidadosa de cada producto</p> 
+  </div> 
+  <div class="feature"> 
+    <h3>Apoyo Local</h3> 
+    <p>Directamente de agricultores locales</p> 
+  </div> 
+</section> 
+ 
+<section class="products" id="seccion-productos"> 
+  <h2>Productos Destacados</h2> 
+  <div class="product-grid"> 
+    <div class="product"> 
+      <img src="img/manzanas.PNG" 
+alt="Manzanas Ecologicas" /> 
+      <h4>Manzanas Ecologicas</h4> 
+      <div class="price">€3.99 / kg</div> 
+      <button class="add-to-cart">Añadir al Carrito</button> 
+    </div> 
+    <div class="product"> 
+      <img src="img/zanahorias.png" alt="Zanahorias Orgánicas" /> 
+      <h4>Zanahorias Orgánicas</h4> 
+      <div class="price">€2.49 / kg</div> 
+      <button class="add-to-cart">Añadir al Carrito</button> 
+    </div> 
+    <div class="product"> 
+      <img 
+src="img/lechuga.png" 
+alt="Lechuga Fresca" /> 
+      <h4>Lechuga Fresca</h4> 
+      <div class="price">€1.99 / unidad</div> 
+      <button class="add-to-cart">Añadir al Carrito</button> 
+    </div> 
+    <div class="product"> 
+      <img src="img/fresas.png" alt="Fresas Frescas" /> 
+      <h4>Fresas Frescas</h4> 
+      <div class="price">€4.99 / kg</div> 
+      <button class="add-to-cart">Añadir al Carrito</button> 
+    </div> 
+  </div> 
+</section> 
+ 
+<!-- Ventana de producto destacado --> 
+<div id="product-preview"> 
+  <div id="preview-content"> 
+    <span id="close-preview">&times;</span> 
+    <img id="preview-img" src="" /> 
+    <h4 id="preview-name"></h4> 
+    <div class="price" id="preview-price"></div> 
+    <button id="preview-add" class="btn">Añadir al Carrito</button> 
+  </div> 
+</div> 
+<section class="cta"> 
+<h2>¿Listo para empezar a comer más saludable?</h2> 
+<p>Únete a miles de familias que ya disfrutan de productos frescos y naturales 
+cada día.</p> 
+<br /> 
+<a href="productos.html" class="btn">Explorar Productos</a> 
+</section> 
+<footer> 
+<p>&copy; 2025 Productos Frescos del Campo</p> 
+</footer> 
+<script> 
+// Carrito simple 
+let carrito = []; 
+function addToCart(name, price){ 
+carrito.push({name, price}); 
+alert("Producto añadido al carrito: " + name); 
+} 
+// Registro / login 
+const formulario = document.getElementById('form-registro'); 
+const loginLabel = document.querySelector('label[for="toggle-registro"]'); 
+const checkbox = document.getElementById('toggle-registro'); 
+  formulario.addEventListener('submit', function(e) { 
+    e.preventDefault(); 
+    const nombre = formulario.querySelector('input[type="text"]').value; 
+    checkbox.checked = false; 
+    loginLabel.innerHTML = "Hola, " + nombre + "   "; 
+    loginLabel.style.color = "#ff9800"; 
+    alert("¡Bienvenido, " + nombre + "!"); 
+  }); 
+ 
+  // Abrir producto destacado 
+  const previewContainer = document.getElementById('product-preview'); 
+  const previewImage = document.getElementById('preview-img'); 
+  const previewName = document.getElementById('preview-name'); 
+  const previewPrice = document.getElementById('preview-price'); 
+  const previewAdd = document.getElementById('preview-add'); 
+  const closePreview = document.getElementById('close-preview'); 
+ 
+  const products = document.querySelectorAll('.product'); 
+ 
+  products.forEach(product => { 
+    const img = product.querySelector('img'); 
+    const btn = product.querySelector('.add-to-cart'); 
+ 
+    // Abrir modal al hacer clic en imagen 
+    img.addEventListener('click', () => { 
+      previewImage.src = img.src; 
+      previewName.textContent = product.querySelector('h4').textContent; 
+      previewPrice.textContent = product.querySelector('.price').textContent; 
+      previewContainer.style.display = 'flex'; 
+    }); 
+ 
+    // Botón añadir al carrito 
+    btn.addEventListener('click', () => { 
+      const name = product.querySelector('h4').textContent; 
+      const price = product.querySelector('.price').textContent; 
+      addToCart(name, price); 
+    }); 
+  }); 
+ 
+  // Botón añadir al carrito del modal 
+  previewAdd.addEventListener('click', function(){ 
+    addToCart(previewName.textContent, previewPrice.textContent); 
+    previewContainer.style.display = 'none'; 
+  }); 
+ 
+  closePreview.addEventListener('click', () => previewContainer.style.display = 
+'none'); 
+  previewContainer.addEventListener('click', e => { if(e.target===previewContainer) 
+previewContainer.style.display='none'; }); 
+ 
+  // Buscador con Enter 
+  const searchInput = document.getElementById('search-input'); 
+ 
+  searchInput.addEventListener('keypress', function(e){ 
+    if(e.key === 'Enter'){ 
+      e.preventDefault(); 
+      const query = this.value.toLowerCase(); 
+      let foundProduct = null; 
+      products.forEach(product => { 
+        const name = product.querySelector('h4').textContent.toLowerCase(); 
+        if(name.includes(query)){ 
+          foundProduct = product; 
+        } 
+      }); 
+ 
+      if(foundProduct){ 
+        const img = foundProduct.querySelector('img'); 
+        previewImage.src = img.src; 
+        previewName.textContent = foundProduct.querySelector('h4').textContent; 
+        previewPrice.textContent = foundProduct.querySelector('.price').textContent; 
+        previewContainer.style.display = 'flex'; 
+      } else { 
+        alert("No se encontró el producto."); 
+      } 
+    } 
+  }); 
+</script> 
+ 
+</body> 
+</html> 
