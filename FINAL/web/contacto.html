@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contacto - Campo Fresco</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { background: #f4f6f4; display: flex; min-height: 100vh; }
+.sidebar { width: 230px; background: #1b5e20; color: #fff; position: fixed; top: 0; left: 0; height: 100vh; display: flex; flex-direction: column; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.25); }
+.sidebar-logo { background: #2e7d32; padding: 24px 20px; text-align: center; border-bottom: 2px solid rgba(255,255,255,0.08); }
+.sidebar-logo h2 { font-size: 1.25rem; }
+.sidebar-logo p { font-size: 0.74rem; color: rgba(255,255,255,0.65); margin-top: 4px; }
+.sidebar-nav { padding: 18px 0; flex: 1; }
+.sidebar-nav a { display: flex; align-items: center; gap: 11px; padding: 13px 24px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.93rem; transition: background 0.2s; }
+.sidebar-nav a:hover, .sidebar-nav a.activo { background: rgba(255,255,255,0.13); color: #fff; border-left: 3px solid #ff9800; }
+.sidebar-nav .sep { border-top: 1px solid rgba(255,255,255,0.09); margin: 8px 0; }
+.sidebar-usuario { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+.nombre-sb { color: #ff9800; font-weight: bold; font-size: 0.9rem; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn-salir-sb { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 8px; border-radius: 7px; cursor: pointer; font-size: 0.84rem; transition: background 0.2s; }
+.btn-salir-sb:hover { background: rgba(255,255,255,0.18); }
+.main-content { margin-left: 230px; flex: 1; padding: 50px 40px; max-width: 700px; }
+h1 { color: #2f7d32; margin-bottom: 8px; }
+.subtitle { color: #777; margin-bottom: 30px; font-size: 0.95rem; }
+.box { background: #fff; border-radius: 16px; padding: 36px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.fg { margin-bottom: 18px; }
+.fg label { display: block; margin-bottom: 6px; font-weight: 600; color: #444; font-size: 0.9rem; }
+.fg input, .fg textarea, .fg select { width: 100%; padding: 12px 15px; border: 1.5px solid #e8e8e8; border-radius: 10px; font-size: 0.94rem; outline: none; transition: all 0.3s; background: #fafafa; font-family: inherit; }
+.fg input:focus, .fg textarea:focus, .fg select:focus { border-color: #2f7d32; background: #fff; box-shadow: 0 0 0 3px rgba(47,125,50,0.09); }
+.fg input.error { border-color: #f44336; }
+.fg textarea { resize: vertical; min-height: 130px; }
+.msg-err { color: #e53935; font-size: 0.79rem; margin-top: 4px; display: none; }
+.msg-err.visible { display: block; }
+.alerta { padding: 14px 18px; border-radius: 10px; margin-bottom: 20px; font-weight: 600; display: none; text-align: center; font-size: 0.9rem; }
+.alerta.ok { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; display: block; }
+.alerta.err { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; display: block; }
+.btn { width: 100%; padding: 14px; background: #2f7d32; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+.btn:hover { background: #1b5e20; transform: translateY(-1px); }
+.btn:disabled { background: #aaa; cursor: not-allowed; transform: none; }
+.info-contacto { background: #f1f8e9; border-radius: 12px; padding: 24px; margin-top: 30px; }
+.info-contacto h3 { color: #2f7d32; margin-bottom: 12px; font-size: 1rem; }
+.info-contacto p { color: #555; font-size: 0.88rem; margin-bottom: 6px; }
+@media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; padding: 30px 20px; } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <h2>Campo Fresco</h2>
+        <p>Tienda Ecologica</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span>Inicio</span></a>
+        <a href="productos.html"><span>Tienda</span></a>
+        <a href="contacto.html" class="activo"><span>Contacto</span></a>
+        <div class="sep"></div>
+        <a href="quienes-somos.html"><span>Quienes Somos</span></a>
+        <a href="admin.html" id="link-admin" style="display:none;"><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar-usuario">
+        <div id="nombre-sb" class="nombre-sb">Sin sesion iniciada</div>
+        <div id="botones-sb">
+            <a href="login.html" style="color:#ff9800;font-size:0.84rem;text-decoration:none;">Iniciar Sesion</a>
+        </div>
+    </div>
+</aside>
+
+<div class="main-content">
+    <h1>Contacto</h1>
+    <p class="subtitle">Envianos un mensaje y te responderemos lo antes posible.</p>
+
+    <div class="box">
+        <div id="alerta" class="alerta"></div>
+        <div class="fg">
+            <label>Nombre completo</label>
+            <input type="text" id="c-nombre" placeholder="Tu nombre" />
+            <span class="msg-err" id="err-c-nombre">El nombre es obligatorio.</span>
+        </div>
+        <div class="fg">
+            <label>Correo electronico</label>
+            <input type="email" id="c-email" placeholder="tu@email.com" />
+            <span class="msg-err" id="err-c-email">Introduce un email valido.</span>
+        </div>
+        <div class="fg">
+            <label>Asunto</label>
+            <select id="c-asunto">
+                <option value="">Selecciona un asunto</option>
+                <option value="consulta">Consulta general</option>
+                <option value="pedido">Informacion sobre un pedido</option>
+                <option value="incidencia">Incidencia con un producto</option>
+                <option value="sugerencia">Sugerencia</option>
+                <option value="otro">Otro</option>
+            </select>
+            <span class="msg-err" id="err-c-asunto">Selecciona un asunto.</span>
+        </div>
+        <div class="fg">
+            <label>Mensaje</label>
+            <textarea id="c-mensaje" placeholder="Escribe tu mensaje aqui..."></textarea>
+            <span class="msg-err" id="err-c-mensaje">El mensaje no puede estar vacio.</span>
+        </div>
+        <button class="btn" id="btn-enviar" onclick="enviar()">Enviar mensaje</button>
+    </div>
+
+    <div class="info-contacto">
+        <h3>Tambien puedes contactarnos en:</h3>
+        <p>Email: info@campofresco.com</p>
+        <p>Telefono: +34 900 123 456</p>
+        <p>Horario: Lunes a Viernes, 9:00 - 18:00</p>
+    </div>
+</div>
+
+<script>
+const API = '../api';
+
+async function enviar() {
+    document.querySelectorAll('.msg-err').forEach(e => e.classList.remove('visible'));
+    document.querySelectorAll('input, textarea, select').forEach(i => i.classList.remove('error'));
+    const nombre = document.getElementById('c-nombre').value.trim();
+    const email = document.getElementById('c-email').value.trim();
+    const asunto = document.getElementById('c-asunto').value;
+    const mensaje = document.getElementById('c-mensaje').value.trim();
+    let err = false;
+    if (!nombre) { document.getElementById('err-c-nombre').classList.add('visible'); document.getElementById('c-nombre').classList.add('error'); err = true; }
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { document.getElementById('err-c-email').classList.add('visible'); document.getElementById('c-email').classList.add('error'); err = true; }
+    if (!asunto) { document.getElementById('err-c-asunto').classList.add('visible'); document.getElementById('c-asunto').classList.add('error'); err = true; }
+    if (!mensaje) { document.getElementById('err-c-mensaje').classList.add('visible'); document.getElementById('c-mensaje').classList.add('error'); err = true; }
+    if (err) return;
+    const btn = document.getElementById('btn-enviar');
+    btn.disabled = true; btn.textContent = 'Enviando...';
+    try {
+        const res = await fetch(API + '/contacto.php', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, email, asunto, mensaje }), credentials: 'include'
+        });
+        const data = await res.json();
+        const alerta = document.getElementById('alerta');
+        if (data.ok) {
+            alerta.textContent = data.mensaje; alerta.className = 'alerta ok';
+            document.getElementById('c-nombre').value = '';
+            document.getElementById('c-email').value = '';
+            document.getElementById('c-asunto').value = '';
+            document.getElementById('c-mensaje').value = '';
+        } else {
+            alerta.textContent = data.mensaje; alerta.className = 'alerta err';
+        }
+    } catch(e) {
+        document.getElementById('alerta').textContent = 'Error de conexion con el servidor.';
+        document.getElementById('alerta').className = 'alerta err';
+    }
+    btn.disabled = false; btn.textContent = 'Enviar mensaje';
+}
+
+(async () => {
+    try {
+        const res = await fetch(API + '/sesion.php', { credentials: 'include' });
+        const data = await res.json();
+        if (data.ok) {
+            document.getElementById('nombre-sb').textContent = data.datos.nombre;
+            document.getElementById('botones-sb').innerHTML =
+                '<button class="btn-salir-sb" onclick="cerrarSesion()">Cerrar Sesion</button>';
+            document.getElementById('link-admin').style.display = 'flex';
+        }
+    } catch(e) {}
+})();
+async function cerrarSesion() {
+    await fetch(API + '/logout.php', { method: 'POST', credentials: 'include' });
+    window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>

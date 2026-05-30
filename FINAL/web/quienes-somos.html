@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quiénes Somos - Campo Fresco</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { display: flex; min-height: 100vh; background: #f4f6f4; }
+.sidebar { width: 230px; background: #1b5e20; color: #fff; position: fixed; top: 0; left: 0; height: 100vh; display: flex; flex-direction: column; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.25); }
+.sidebar-logo { background: #2e7d32; padding: 24px 20px; text-align: center; border-bottom: 2px solid rgba(255,255,255,0.08); }
+.sidebar-logo h2 { font-size: 1.25rem; }
+.sidebar-logo p { font-size: 0.74rem; color: rgba(255,255,255,0.65); margin-top: 4px; }
+.sidebar-nav { padding: 18px 0; flex: 1; }
+.sidebar-nav a { display: flex; align-items: center; gap: 11px; padding: 13px 24px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.93rem; transition: background 0.2s; }
+.sidebar-nav a:hover, .sidebar-nav a.activo { background: rgba(255,255,255,0.13); color: #fff; border-left: 3px solid #ff9800; }
+.sidebar-nav .sep { border-top: 1px solid rgba(255,255,255,0.09); margin: 8px 0; }
+.sidebar-usuario { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+.nombre-sb { color: #ff9800; font-weight: bold; font-size: 0.9rem; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn-salir-sb { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 8px; border-radius: 7px; cursor: pointer; font-size: 0.84rem; transition: background 0.2s; }
+.btn-salir-sb:hover { background: rgba(255,255,255,0.18); }
+
+.main-content { margin-left: 230px; flex: 1; }
+
+.hero-nosotros { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../Fase2/img/fondo-granja.png') center/cover no-repeat; padding: 90px 50px; color: #fff; text-align: center; }
+.hero-nosotros h1 { font-size: 2.6rem; margin-bottom: 14px; text-shadow: 2px 2px 5px rgba(0,0,0,0.4); }
+.hero-nosotros p { max-width: 600px; margin: 0 auto; font-size: 1.1rem; opacity: 0.9; }
+
+.seccion { padding: 60px 50px; }
+.seccion-blanca { background: #fff; }
+.seccion h2 { color: #2f7d32; font-size: 1.8rem; margin-bottom: 10px; }
+.seccion .subtitulo { color: #888; font-size: 1rem; margin-bottom: 40px; }
+
+.fundadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 36px; margin-top: 10px; }
+.fundador-card { background: #fff; border-radius: 20px; padding: 36px 30px; box-shadow: 0 6px 24px rgba(0,0,0,0.08); text-align: center; border-top: 4px solid #2f7d32; transition: transform 0.3s; }
+.fundador-card:hover { transform: translateY(-6px); }
+.avatar { width: 100px; height: 100px; background: linear-gradient(135deg, #1b5e20, #43a047); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 2.6rem; }
+.fundador-card h3 { font-size: 1.25rem; color: #1b5e20; margin-bottom: 6px; }
+.fundador-card .rol { font-size: 0.85rem; color: #ff9800; font-weight: 600; margin-bottom: 16px; letter-spacing: 0.5px; text-transform: uppercase; }
+.fundador-card p { color: #666; font-size: 0.93rem; line-height: 1.65; }
+
+.historia { max-width: 780px; margin: 0 auto; }
+.historia p { color: #555; font-size: 1rem; line-height: 1.75; margin-bottom: 20px; }
+.historia strong { color: #2f7d32; }
+
+.valores { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px; margin-top: 10px; }
+.valor { background: #f1f8e9; border-radius: 14px; padding: 26px 22px; border-left: 4px solid #2f7d32; }
+.valor .icon { font-size: 2rem; margin-bottom: 12px; }
+.valor h4 { color: #1b5e20; font-size: 1rem; margin-bottom: 8px; }
+.valor p { color: #666; font-size: 0.86rem; line-height: 1.5; }
+
+.cta { background: #2f7d32; color: #fff; text-align: center; padding: 70px 40px; }
+.cta h2 { font-size: 2rem; margin-bottom: 16px; }
+.cta p { font-size: 1rem; opacity: 0.9; margin-bottom: 28px; }
+.btn-cta { background: #ff9800; color: #fff; padding: 13px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1rem; display: inline-block; transition: all 0.3s; }
+.btn-cta:hover { background: #e68a00; transform: translateY(-2px); }
+
+footer { background: #1b5e20; color: #fff; text-align: center; padding: 22px; font-size: 0.88rem; }
+@media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; } .seccion { padding: 40px 24px; } .hero-nosotros { padding: 60px 24px; } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <h2>Campo Fresco</h2>
+        <p>Tienda Ecologica</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="index.html"><span>Inicio</span></a>
+        <a href="productos.html"><span>Tienda</span></a>
+        <a href="contacto.html"><span>Contacto</span></a>
+        <div class="sep"></div>
+        <a href="quienes-somos.html" class="activo"><span>Quienes Somos</span></a>
+        <a href="admin.html" id="link-admin" style="display:none;"><span>Administracion</span></a>
+    </nav>
+    <div class="sidebar-usuario">
+        <div id="nombre-sb" class="nombre-sb">Sin sesion iniciada</div>
+        <div id="botones-sb">
+            <a href="login.html" style="color:#ff9800;font-size:0.84rem;text-decoration:none;">Iniciar Sesion</a>
+        </div>
+    </div>
+</aside>
+
+<div class="main-content">
+
+    <div class="hero-nosotros">
+        <h1>Quienes Somos</h1>
+        <p>Una historia de amistad, pasion por lo natural y ganas de cambiar la forma en que comemos.</p>
+    </div>
+
+    <section class="seccion seccion-blanca">
+        <h2>Los Fundadores</h2>
+        <p class="subtitulo">Dos jovenes con una vision compartida: acercar los productos del campo a cada hogar.</p>
+        <div class="fundadores">
+            <div class="fundador-card">
+                <div class="avatar">🌱</div>
+                <h3>Alex Valls</h3>
+                <div class="rol">Co-fundador &amp; Tecnologia</div>
+                <p>Alex tiene 18 años y es un apasionado de la tecnologia y los sistemas. Desde pequeno supo que queria crear algo propio. Su conocimiento tecnico fue clave para poner en marcha la plataforma digital de Campo Fresco, garantizando que cada pedido llegue siempre de forma eficiente y segura.</p>
+            </div>
+            <div class="fundador-card">
+                <div class="avatar">🌿</div>
+                <h3>Unai Hervella</h3>
+                <div class="rol">Co-fundador &amp; Producto</div>
+                <p>Unai tiene 18 años y lleva toda la vida rodeado de la cultura del campo y los productos naturales. Su vision sobre la calidad ecologica y su relacion con los productores locales son el alma de Campo Fresco. El se encarga de que cada producto que llega a tu mesa sea realmente lo mejor.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="seccion" style="background:#f4f6f4;">
+        <h2>Nuestra Historia</h2>
+        <p class="subtitulo">De una idea a una tienda real</p>
+        <div class="historia">
+            <p>Alex y Unai se conocieron en el instituto, durante el primer año del ciclo de <strong>Sistemas Microinformaticos y Redes</strong>. Desde el principio conectaron: uno con su cabeza llena de proyectos tecnologicos, el otro con su pasion por lo natural y lo autentico.</p>
+            <p>Un dia, mientras hablaban de sus proyectos de futuro, surgio la pregunta: <em>¿Por que es tan dificil encontrar productos ecologicos de verdad, frescos y a buen precio?</em> Ahi nacio la semilla de lo que seria <strong>Campo Fresco</strong>.</p>
+            <p>Lo que empezo como un proyecto de clase se fue convirtiendo en algo mucho mas serio. Trabajaron codo a codo para crear una tienda online que conecta directamente a los consumidores con los productores locales, eliminando intermediarios y garantizando la maxima frescura.</p>
+            <p>Hoy, Campo Fresco no es solo una tienda. Es un compromiso con una alimentacion mas sana, con el medioambiente y con el apoyo a los pequenos agricultores de proximidad.</p>
+        </div>
+    </section>
+
+    <section class="seccion seccion-blanca">
+        <h2>Nuestros Valores</h2>
+        <p class="subtitulo">Lo que nos mueve cada dia</p>
+        <div class="valores">
+            <div class="valor">
+                <div class="icon">🌿</div>
+                <h4>100% Natural</h4>
+                <p>Solo trabajamos con productos ecologicos certificados, sin pesticidas ni aditivos artificiales.</p>
+            </div>
+            <div class="valor">
+                <div class="icon">🤝</div>
+                <h4>Proximidad</h4>
+                <p>Colaboramos con agricultores locales para reducir la huella de carbono y apoyar la economia de cerca.</p>
+            </div>
+            <div class="valor">
+                <div class="icon">⚡</div>
+                <h4>Frescura Garantizada</h4>
+                <p>Del campo a tu puerta en menos de 24 horas. La frescura no es opcional, es nuestra promesa.</p>
+            </div>
+            <div class="valor">
+                <div class="icon">♻️</div>
+                <h4>Sostenibilidad</h4>
+                <p>Packaging biodegradable y logistica zero-waste porque el planeta tambien importa.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Forma parte del cambio</h2>
+        <p>Descubre nuestra seleccion de productos ecologicos y vive la diferencia.</p>
+        <a href="productos.html" class="btn-cta">Ver la tienda</a>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Campo Fresco - Alex Valls &amp; Unai Hervella - iMES - Proyecto Intermodular</p>
+    </footer>
+</div>
+
+<script>
+const API = '../api';
+(async () => {
+    try {
+        const res = await fetch(API + '/sesion.php', { credentials: 'include' });
+        const data = await res.json();
+        if (data.ok) {
+            document.getElementById('nombre-sb').textContent = data.datos.nombre;
+            document.getElementById('botones-sb').innerHTML =
+                '<button class="btn-salir-sb" onclick="cerrarSesion()">Cerrar Sesion</button>';
+            document.getElementById('link-admin').style.display = 'flex';
+        }
+    } catch(e) {}
+})();
+async function cerrarSesion() {
+    await fetch(API + '/logout.php', { method: 'POST', credentials: 'include' });
+    window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>

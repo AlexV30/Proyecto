@@ -1,33 +1,24 @@
 <?php
 require_once 'config.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    responder(false, null, 'Metodo no permitido');
-}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') responder(false, null, 'Método no permitido');
 
-$input = leerBody();
-$nombre = trim($input['nombre'] ?? '');
-$email = trim($input['email'] ?? '');
-$asunto = $input['asunto'] ?? '';
-$mensaje = trim($input['mensaje'] ?? '');
+$body   = leerBody();
+$nombre  = trim($body['nombre']  ?? '');
+$email   = trim($body['email']   ?? '');
+$asunto  = trim($body['asunto']  ?? '');
+$mensaje = trim($body['mensaje'] ?? '');
 
-if (!$nombre || !$email || !$asunto || !$mensaje) {
+if (!$nombre || !$email || !$asunto || !$mensaje)
     responder(false, null, 'Todos los campos son obligatorios');
-}
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    responder(false, null, 'Email no valido');
-}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+    responder(false, null, 'El email no es válido');
 
-try {
-    $pdo = getDB();
-    $asuntos = ['consulta' => 'Consulta general', 'pedido' => 'Informacion sobre un pedido', 'incidencia' => 'Incidencia con un producto', 'sugerencia' => 'Sugerencia', 'otro' => 'Otro'];
-    $asuntoTexto = $asuntos[$asunto] ?? $asunto;
+if (mb_strlen($mensaje) > 2000)
+    responder(false, null, 'El mensaje es demasiado largo');
 
-    $stmt = $pdo->prepare('INSERT INTO contactos (nombre, email, asunto, mensaje, fecha) VALUES (?, ?, ?, ?, NOW())');
-    $stmt->execute([$nombre, $email, $asuntoTexto, $mensaje]);
+getDB()->prepare('INSERT INTO mensajes (nombre, email, asunto, mensaje) VALUES (?, ?, ?, ?)')
+       ->execute([$nombre, $email, $asunto, $mensaje]);
 
-    responder(true, null, 'Mensaje enviado correctamente. Te responderemos pronto.');
-} catch (PDOException $e) {
-    responder(false, null, 'Error al enviar el mensaje. Intentelo mas tarde.');
-}
+responder(true, null, '¡Mensaje enviado! Te responderemos lo antes posible.');

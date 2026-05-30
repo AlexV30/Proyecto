@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin - Campo Fresco</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { display: flex; min-height: 100vh; background: #f4f6f4; }
+.sidebar { width: 230px; background: #1b5e20; color: #fff; position: fixed; top: 0; left: 0; height: 100vh; display: flex; flex-direction: column; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.25); }
+.sidebar-logo { background: #2e7d32; padding: 24px 20px; text-align: center; border-bottom: 2px solid rgba(255,255,255,0.08); }
+.sidebar-logo h2 { font-size: 1.2rem; }
+.sidebar-logo p { font-size: 0.74rem; color: rgba(255,255,255,0.65); margin-top: 4px; }
+.sidebar-nav { padding: 18px 0; flex: 1; }
+.sidebar-nav a { display: flex; align-items: center; gap: 11px; padding: 13px 24px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.93rem; transition: background 0.2s; }
+.sidebar-nav a:hover, .sidebar-nav a.activo { background: rgba(255,255,255,0.13); color: #fff; border-left: 3px solid #ff9800; }
+.sidebar-nav .sep { border-top: 1px solid rgba(255,255,255,0.09); margin: 8px 0; }
+.sidebar-usuario { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+.nombre-sb { color: #ff9800; font-weight: bold; font-size: 0.9rem; margin-bottom: 8px; }
+.btn-salir-sb { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 8px; border-radius: 7px; cursor: pointer; font-size: 0.84rem; }
+.main-content { margin-left: 230px; flex: 1; }
+.topbar { background: #fff; padding: 14px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 90; }
+.topbar h1 { font-size: 1.2rem; color: #1b5e20; }
+.container { padding: 30px; max-width: 1100px; }
+h2.ts { color: #1b5e20; border-bottom: 3px solid #ff9800; padding-bottom: 8px; margin-bottom: 22px; font-size: 1.25rem; }
+.form-card { background: #fff; border-radius: 14px; padding: 28px; box-shadow: 0 3px 12px rgba(0,0,0,0.07); margin-bottom: 28px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 14px; }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg label { font-weight: 600; color: #444; font-size: 0.86rem; }
+.fg input, .fg select { padding: 11px 13px; border: 1.5px solid #e8e8e8; border-radius: 9px; font-size: 0.92rem; outline: none; transition: all 0.3s; background: #fafafa; }
+.fg input:focus, .fg select:focus { border-color: #2f7d32; background: #fff; }
+.fg input.error { border-color: #f44336; }
+.msg-e { color: #e53935; font-size: 0.78rem; display: none; }
+.msg-e.v { display: block; }
+.form-btns { display: flex; gap: 10px; margin-top: 10px; }
+.btn-v { background: #2f7d32; color: #fff; border: none; padding: 11px 24px; border-radius: 9px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+.btn-v:hover { background: #1b5e20; transform: translateY(-1px); }
+.btn-g { background: #9e9e9e; color: #fff; border: none; padding: 11px 20px; border-radius: 9px; cursor: pointer; font-weight: bold; }
+.tabla-card { background: #fff; border-radius: 14px; padding: 28px; box-shadow: 0 3px 12px rgba(0,0,0,0.07); }
+table { width: 100%; border-collapse: collapse; }
+thead { background: #2f7d32; color: #fff; }
+thead th { padding: 12px 14px; text-align: left; font-size: 0.86rem; }
+tbody tr { border-bottom: 1px solid #f5f5f5; transition: background 0.15s; }
+tbody tr:hover { background: #f9fdf9; }
+tbody td { padding: 11px 14px; font-size: 0.87rem; vertical-align: middle; }
+tbody td img { width: 46px; height: 36px; object-fit: cover; border-radius: 6px; }
+.badge { padding: 3px 10px; border-radius: 20px; font-size: 0.76rem; font-weight: 600; }
+.badge-frutas { background: #fff3e0; color: #e65100; }
+.badge-verduras { background: #e8f5e9; color: #1b5e20; }
+.badge-basicos { background: #e3f2fd; color: #1565c0; }
+.btn-e { background: #1976d2; color: #fff; border: none; padding: 5px 11px; border-radius: 6px; cursor: pointer; font-size: 0.79rem; font-weight: 600; }
+.btn-d { background: #e53935; color: #fff; border: none; padding: 5px 11px; border-radius: 6px; cursor: pointer; font-size: 0.79rem; font-weight: 600; margin-left: 4px; }
+#modal-confirmar { display: none; position: fixed; z-index: 50000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+.modal-box { background: #fff; border-radius: 16px; padding: 35px 30px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+.modal-box h3 { font-size: 1.2rem; margin-bottom: 10px; color: #333; }
+.modal-box p { color: #777; font-size: 0.9rem; margin-bottom: 25px; line-height: 1.5; }
+.modal-btns { display: flex; gap: 12px; justify-content: center; }
+.btn-si { background: #e53935; color: #fff; border: none; padding: 11px 28px; border-radius: 9px; cursor: pointer; font-weight: bold; }
+.btn-no { background: #f5f5f5; color: #555; border: none; padding: 11px 28px; border-radius: 9px; cursor: pointer; font-weight: bold; }
+#toast { position: fixed; top: 18px; right: 18px; z-index: 99999; display: flex; flex-direction: column; gap: 8px; }
+.toast-msg { padding: 13px 18px; border-radius: 10px; font-weight: 600; font-size: 0.86rem; box-shadow: 0 4px 15px rgba(0,0,0,0.12); animation: slideIn 0.3s; }
+.toast-exito { background: #e8f5e9; color: #1b5e20; border-left: 4px solid #4caf50; }
+.toast-error { background: #ffebee; color: #c62828; border-left: 4px solid #f44336; }
+.toast-info  { background: #e3f2fd; color: #1565c0; border-left: 4px solid #2196f3; }
+@keyframes slideIn { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+@media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; } }
+@media (max-width: 850px) { .form-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div id="modal-confirmar">
+    <div class="modal-box">
+        <div style="font-size:3rem;margin-bottom:15px;">⚠️</div>
+        <h3 id="modal-titulo">Eliminar producto?</h3>
+        <p id="modal-texto">Esta accion no se puede deshacer.</p>
+        <div class="modal-btns">
+            <button class="btn-si" id="btn-si">Si, eliminar</button>
+            <button class="btn-no" id="btn-no">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <h2>Campo Fresco</h2>
+        <p>Panel de Admin</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="index.html">Inicio</a>
+        <a href="productos.html">Tienda</a>
+        <div class="sep"></div>
+        <a href="admin.html" class="activo">Administracion</a>
+    </nav>
+    <div class="sidebar-usuario">
+        <div id="nombre-sb" class="nombre-sb">Cargando...</div>
+        <button class="btn-salir-sb" onclick="cerrarSesion()">Cerrar Sesion</button>
+    </div>
+</aside>
+
+<div class="main-content">
+    <div class="topbar">
+        <h1>Gestion de Productos</h1>
+        <span id="info-total" style="color:#888;font-size:0.9rem;"></span>
+    </div>
+
+    <div class="container">
+        <div class="form-card">
+            <h2 class="ts" id="form-titulo">Anadir Nuevo Producto</h2>
+            <input type="hidden" id="prod-id" />
+            <div class="form-row">
+                <div class="fg">
+                    <label>Nombre *</label>
+                    <input type="text" id="prod-nombre" placeholder="Nombre del producto" />
+                    <span class="msg-e" id="err-nombre">El nombre es obligatorio.</span>
+                </div>
+                <div class="fg">
+                    <label>Precio (EUR) *</label>
+                    <input type="number" id="prod-precio" step="0.01" min="0.01" placeholder="2.50" />
+                    <span class="msg-e" id="err-precio">Introduce un precio valido mayor que 0.</span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="fg">
+                    <label>Categoria *</label>
+                    <select id="prod-cat">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="frutas">Frutas</option>
+                        <option value="verduras">Verduras</option>
+                        <option value="basicos">Basicos</option>
+                    </select>
+                    <span class="msg-e" id="err-cat">Selecciona una categoria.</span>
+                </div>
+                <div class="fg">
+                    <label>Ruta imagen</label>
+                    <input type="text" id="prod-img" placeholder="../Fase2/img/manzanas.PNG" />
+                </div>
+            </div>
+            <div class="fg" style="margin-bottom:14px;">
+                <label>Descripcion</label>
+                <input type="text" id="prod-desc" placeholder="Descripcion corta del producto" />
+            </div>
+            <div class="form-btns">
+                <button class="btn-v" onclick="guardar()">Guardar Producto</button>
+                <button class="btn-g" id="btn-cancelar" style="display:none;" onclick="cancelar()">Cancelar edicion</button>
+            </div>
+        </div>
+
+        <div class="tabla-card">
+            <h2 class="ts">Productos (<span id="num-prod">0</span>)</h2>
+            <table>
+                <thead><tr><th>ID</th><th>Img</th><th>Nombre</th><th>Precio</th><th>Categoria</th><th>Descripcion</th><th>Acciones</th></tr></thead>
+                <tbody id="tbody"><tr><td colspan="7" style="text-align:center;padding:30px;color:#aaa;">Cargando...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+const API = '../api';
+
+function toast(msg, tipo) {
+    tipo = tipo || 'exito';
+    const c = document.getElementById('toast');
+    const d = document.createElement('div');
+    d.className = 'toast-msg toast-' + tipo;
+    d.textContent = msg;
+    c.appendChild(d);
+    setTimeout(function() { d.style.opacity='0'; d.style.transition='opacity 0.4s'; setTimeout(function(){d.remove();},400); }, 2800);
+}
+
+(async function() {
+    try {
+        const res = await fetch(API + '/sesion.php', { credentials: 'include' });
+        const data = await res.json();
+        if (!data.ok) {
+            toast('Necesitas iniciar sesion', 'error');
+            setTimeout(function(){ window.location.href='login.html'; }, 1500);
+            return;
+        }
+        document.getElementById('nombre-sb').textContent = data.datos.nombre;
+        cargarTabla();
+    } catch(e) { toast('Error de conexion con el servidor', 'error'); }
+})();
+
+async function cerrarSesion() {
+    await fetch(API + '/logout.php', { method: 'POST', credentials: 'include' });
+    window.location.href = 'login.html';
+}
+
+let callbackConfirmar = null;
+function confirmar(titulo, texto, cb) {
+    document.getElementById('modal-titulo').textContent = titulo;
+    document.getElementById('modal-texto').textContent = texto;
+    callbackConfirmar = cb;
+    document.getElementById('modal-confirmar').style.display = 'flex';
+}
+document.getElementById('btn-si').onclick = function() {
+    document.getElementById('modal-confirmar').style.display = 'none';
+    if (callbackConfirmar) callbackConfirmar();
+};
+document.getElementById('btn-no').onclick = function() {
+    document.getElementById('modal-confirmar').style.display = 'none';
+    toast('Eliminacion cancelada', 'info');
+};
+
+async function cargarTabla() {
+    try {
+        const res = await fetch(API + '/productos.php', { credentials: 'include' });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.mensaje);
+        renderTabla(data.datos);
+    } catch(e) {
+        document.getElementById('tbody').innerHTML =
+            '<tr><td colspan="7" style="text-align:center;padding:20px;color:#e53935;">Error: ' + e.message + '</td></tr>';
+    }
+}
+
+function renderTabla(productos) {
+    document.getElementById('num-prod').textContent = productos.length;
+    document.getElementById('info-total').textContent = productos.length + ' productos en la base de datos';
+    const tb = document.getElementById('tbody');
+    tb.innerHTML = '';
+    if (!productos.length) {
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#bbb;">No hay productos.</td></tr>';
+        return;
+    }
+    productos.forEach(function(p) {
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+            '<td style="color:#999;">' + p.id + '</td>' +
+            '<td><img src="' + p.imagen + '" alt="' + p.nombre + '" onerror="this.style.opacity=0.2" /></td>' +
+            '<td><strong>' + p.nombre + '</strong></td>' +
+            '<td><strong>' + parseFloat(p.precio).toFixed(2) + 'EUR</strong></td>' +
+            '<td><span class="badge badge-' + p.categoria + '">' + p.categoria + '</span></td>' +
+            '<td style="color:#888;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (p.descripcion || '-') + '</td>' +
+            '<td>' +
+                '<button class="btn-e" onclick="editar(' + p.id + ')">Editar</button>' +
+                '<button class="btn-d" onclick="eliminar(' + p.id + ',\'' + p.nombre.replace(/'/g, "\\'") + '\')">Borrar</button>' +
+            '</td>';
+        tb.appendChild(tr);
+    });
+}
+
+async function guardar() {
+    ['err-nombre','err-precio','err-cat'].forEach(function(id){ document.getElementById(id).classList.remove('v'); });
+    ['prod-nombre','prod-precio','prod-cat'].forEach(function(id){ document.getElementById(id).classList.remove('error'); });
+    const nombre = document.getElementById('prod-nombre').value.trim();
+    const precio = parseFloat(document.getElementById('prod-precio').value);
+    const cat    = document.getElementById('prod-cat').value;
+    const img    = document.getElementById('prod-img').value.trim();
+    const desc   = document.getElementById('prod-desc').value.trim();
+    const id     = document.getElementById('prod-id').value;
+    let err = false;
+    if (!nombre) { document.getElementById('prod-nombre').classList.add('error'); document.getElementById('err-nombre').classList.add('v'); err=true; }
+    if (isNaN(precio) || precio <= 0) { document.getElementById('prod-precio').classList.add('error'); document.getElementById('err-precio').classList.add('v'); err=true; }
+    if (!cat) { document.getElementById('prod-cat').classList.add('error'); document.getElementById('err-cat').classList.add('v'); err=true; }
+    if (err) return;
+    const body = { nombre, precio, categoria: cat, imagen: img || '../Fase2/img/manzanas.PNG', descripcion: desc };
+    try {
+        let res;
+        if (id) {
+            res = await fetch(API + '/productos.php?id=' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'include' });
+        } else {
+            res = await fetch(API + '/productos.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'include' });
+        }
+        const data = await res.json();
+        if (data.ok) { toast(data.mensaje, 'exito'); limpiar(); cargarTabla(); }
+        else { toast(data.mensaje, 'error'); }
+    } catch(e) { toast('Error de conexion', 'error'); }
+}
+
+async function editar(id) {
+    try {
+        const res = await fetch(API + '/productos.php?id=' + id, { credentials: 'include' });
+        const data = await res.json();
+        if (!data.ok) { toast('Producto no encontrado', 'error'); return; }
+        const p = data.datos;
+        document.getElementById('form-titulo').textContent = 'Editando: ' + p.nombre;
+        document.getElementById('prod-id').value = p.id;
+        document.getElementById('prod-nombre').value = p.nombre;
+        document.getElementById('prod-precio').value = p.precio;
+        document.getElementById('prod-cat').value = p.categoria;
+        document.getElementById('prod-img').value = p.imagen;
+        document.getElementById('prod-desc').value = p.descripcion || '';
+        document.getElementById('btn-cancelar').style.display = 'inline-block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        toast('Editando "' + p.nombre + '"', 'info');
+    } catch(e) { toast('Error de conexion', 'error'); }
+}
+
+function eliminar(id, nombre) {
+    confirmar('Eliminar producto?', 'Vas a eliminar "' + nombre + '". Esta accion no se puede deshacer.',
+        async function() {
+            try {
+                const res = await fetch(API + '/productos.php?id=' + id, { method: 'DELETE', credentials: 'include' });
+                const data = await res.json();
+                if (data.ok) { toast(data.mensaje, 'info'); cargarTabla(); }
+                else { toast(data.mensaje, 'error'); }
+            } catch(e) { toast('Error de conexion', 'error'); }
+        }
+    );
+}
+
+function cancelar() { limpiar(); toast('Edicion cancelada', 'info'); }
+
+function limpiar() {
+    document.getElementById('form-titulo').textContent = 'Anadir Nuevo Producto';
+    document.getElementById('prod-id').value = '';
+    ['prod-nombre','prod-precio','prod-img','prod-desc'].forEach(function(id){ document.getElementById(id).value=''; });
+    document.getElementById('prod-cat').value = '';
+    document.getElementById('btn-cancelar').style.display = 'none';
+    ['err-nombre','err-precio','err-cat'].forEach(function(id){ document.getElementById(id).classList.remove('v'); });
+    ['prod-nombre','prod-precio','prod-cat'].forEach(function(id){ document.getElementById(id).classList.remove('error'); });
+}
+</script>
+</body>
+</html>

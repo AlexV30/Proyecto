@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Acceder - Campo Fresco</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { background: linear-gradient(135deg, #1b5e20, #2e7d32 50%, #43a047); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.box { background: #fff; border-radius: 20px; padding: 42px 40px; width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.logo { text-align: center; margin-bottom: 28px; }
+.logo h1 { color: #2f7d32; font-size: 2rem; margin-bottom: 5px; }
+.logo p { color: #999; font-size: 0.87rem; }
+.tabs { display: flex; background: #f5f5f5; border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+.tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: 600; color: #888; border-radius: 8px; transition: all 0.3s; font-size: 0.9rem; }
+.tab.activo { background: #fff; color: #2f7d32; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.form { display: none; }
+.form.activo { display: block; }
+.fg { margin-bottom: 16px; }
+.fg label { display: block; margin-bottom: 5px; font-weight: 600; color: #444; font-size: 0.87rem; }
+.fg input { width: 100%; padding: 12px 15px; border: 1.5px solid #e8e8e8; border-radius: 10px; font-size: 0.94rem; outline: none; transition: all 0.3s; background: #fafafa; }
+.fg input:focus { border-color: #2f7d32; background: #fff; box-shadow: 0 0 0 3px rgba(47,125,50,0.09); }
+.fg input.error { border-color: #f44336; }
+.fg input.ok { border-color: #4caf50; }
+.msg-err { color: #e53935; font-size: 0.79rem; margin-top: 4px; display: none; }
+.msg-err.visible { display: block; }
+.alerta { padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-weight: 600; display: none; text-align: center; font-size: 0.88rem; }
+.alerta.ok { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; display: block; }
+.alerta.err { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; display: block; }
+.btn { width: 100%; padding: 14px; background: #2f7d32; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s; margin-top: 6px; }
+.btn:hover { background: #1b5e20; transform: translateY(-1px); }
+.btn:disabled { background: #aaa; cursor: not-allowed; transform: none; }
+.volver { text-align: center; margin-top: 22px; }
+.volver a { color: #2f7d32; text-decoration: none; font-size: 0.88rem; }
+</style>
+</head>
+<body>
+<div class="box">
+    <div class="logo">
+        <h1>🌿 Campo Fresco</h1>
+        <p>Tu tienda ecologica de confianza</p>
+    </div>
+    <div class="tabs">
+        <div class="tab activo" id="tab-login" onclick="cambiarTab('login')">Iniciar Sesion</div>
+        <div class="tab" id="tab-reg" onclick="cambiarTab('reg')">Crear Cuenta</div>
+    </div>
+
+    <div class="form activo" id="form-login">
+        <div id="alerta-login" class="alerta"></div>
+        <div class="fg">
+            <label>Correo electronico</label>
+            <input type="email" id="l-email" placeholder="tu@email.com" />
+            <span class="msg-err" id="err-l-email">Introduce un email valido.</span>
+        </div>
+        <div class="fg">
+            <label>Contraseña</label>
+            <input type="password" id="l-pass" placeholder="Tu contraseña" />
+            <span class="msg-err" id="err-l-pass">La contraseña no puede estar vacia.</span>
+        </div>
+        <button class="btn" id="btn-login" onclick="login()">Entrar</button>
+    </div>
+
+    <div class="form" id="form-reg">
+        <div id="alerta-reg" class="alerta"></div>
+        <div class="fg">
+            <label>Nombre completo</label>
+            <input type="text" id="r-nombre" placeholder="Tu nombre y apellidos" />
+            <span class="msg-err" id="err-r-nombre">El nombre debe tener al menos 2 caracteres.</span>
+        </div>
+        <div class="fg">
+            <label>Correo electronico</label>
+            <input type="email" id="r-email" placeholder="tu@email.com" />
+            <span class="msg-err" id="err-r-email">Introduce un email valido.</span>
+        </div>
+        <div class="fg">
+            <label>Contraseña <span style="color:#bbb;font-weight:normal;">(min. 6 caracteres)</span></label>
+            <input type="password" id="r-pass" placeholder="Crea una contrasena" />
+            <span class="msg-err" id="err-r-pass">Minimo 6 caracteres.</span>
+        </div>
+        <div class="fg">
+            <label>Confirmar contrasena</label>
+            <input type="password" id="r-pass2" placeholder="Repite la contrasena" />
+            <span class="msg-err" id="err-r-pass2">Las contrasenas no coinciden.</span>
+        </div>
+        <button class="btn" id="btn-reg" onclick="registro()">Crear cuenta</button>
+    </div>
+
+    <div class="volver"><a href="index.html">Volver a la tienda</a></div>
+</div>
+
+<script>
+const API = '../api';
+
+function cambiarTab(t) {
+    ['login','reg'].forEach(x => {
+        document.getElementById('tab-'+x).classList.remove('activo');
+        document.getElementById('form-'+x).classList.remove('activo');
+    });
+    document.getElementById('tab-'+t).classList.add('activo');
+    document.getElementById('form-'+t).classList.add('activo');
+    document.querySelectorAll('.msg-err').forEach(e => e.classList.remove('visible'));
+    document.querySelectorAll('input').forEach(i => { i.classList.remove('error','ok'); });
+    document.querySelectorAll('.alerta').forEach(a => { a.className='alerta'; a.textContent=''; });
+}
+
+function marcarErr(id, errId) { document.getElementById(id).classList.add('error'); document.getElementById(errId).classList.add('visible'); }
+function marcarOk(id) { document.getElementById(id).classList.remove('error'); document.getElementById(id).classList.add('ok'); }
+
+async function login() {
+    document.querySelectorAll('#form-login .msg-err').forEach(e => e.classList.remove('visible'));
+    document.querySelectorAll('#form-login input').forEach(i => i.classList.remove('error','ok'));
+    const email = document.getElementById('l-email').value.trim();
+    const pass  = document.getElementById('l-pass').value;
+    let err = false;
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { marcarErr('l-email','err-l-email'); err=true; } else marcarOk('l-email');
+    if (!pass) { marcarErr('l-pass','err-l-pass'); err=true; } else marcarOk('l-pass');
+    if (err) return;
+    const btn = document.getElementById('btn-login');
+    btn.disabled = true; btn.textContent = 'Entrando...';
+    try {
+        const res = await fetch(API + '/login.php', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password: pass }), credentials: 'include'
+        });
+        const data = await res.json();
+        const alerta = document.getElementById('alerta-login');
+        if (data.ok) {
+            alerta.textContent = data.mensaje; alerta.className = 'alerta ok';
+            setTimeout(() => window.location.href = 'index.html', 1200);
+        } else {
+            alerta.textContent = data.mensaje; alerta.className = 'alerta err';
+            btn.disabled = false; btn.textContent = 'Entrar';
+        }
+    } catch(e) {
+        document.getElementById('alerta-login').textContent = 'Error de conexion con el servidor.';
+        document.getElementById('alerta-login').className = 'alerta err';
+        btn.disabled = false; btn.textContent = 'Entrar';
+    }
+}
+
+async function registro() {
+    document.querySelectorAll('#form-reg .msg-err').forEach(e => e.classList.remove('visible'));
+    document.querySelectorAll('#form-reg input').forEach(i => i.classList.remove('error','ok'));
+    const nombre = document.getElementById('r-nombre').value.trim();
+    const email  = document.getElementById('r-email').value.trim();
+    const pass   = document.getElementById('r-pass').value;
+    const pass2  = document.getElementById('r-pass2').value;
+    let err = false;
+    if (nombre.length < 2) { marcarErr('r-nombre','err-r-nombre'); err=true; } else marcarOk('r-nombre');
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { marcarErr('r-email','err-r-email'); err=true; } else marcarOk('r-email');
+    if (pass.length < 6) { marcarErr('r-pass','err-r-pass'); err=true; } else marcarOk('r-pass');
+    if (pass !== pass2) { marcarErr('r-pass2','err-r-pass2'); err=true; } else marcarOk('r-pass2');
+    if (err) return;
+    const btn = document.getElementById('btn-reg');
+    btn.disabled = true; btn.textContent = 'Creando cuenta...';
+    try {
+        const res = await fetch(API + '/registro.php', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, email, password: pass }), credentials: 'include'
+        });
+        const data = await res.json();
+        const alerta = document.getElementById('alerta-reg');
+        if (data.ok) {
+            alerta.textContent = data.mensaje; alerta.className = 'alerta ok';
+            setTimeout(() => { cambiarTab('login'); document.getElementById('l-email').value = email; }, 1800);
+        } else {
+            alerta.textContent = data.mensaje; alerta.className = 'alerta err';
+        }
+    } catch(e) {
+        document.getElementById('alerta-reg').textContent = 'Error de conexion con el servidor.';
+        document.getElementById('alerta-reg').className = 'alerta err';
+    }
+    btn.disabled = false; btn.textContent = 'Crear cuenta';
+}
+
+(async () => {
+    try {
+        const res = await fetch(API + '/sesion.php', { credentials: 'include' });
+        const data = await res.json();
+        if (data.ok) window.location.href = 'index.html';
+    } catch(e) {}
+})();
+</script>
+</body>
+</html>
