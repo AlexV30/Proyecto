@@ -494,14 +494,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <td><span class="badge badge-basicos"><?= h($m['asunto']) ?></span></td>
             <td style="font-size:12px;color:#64748b"><?= h($m['fecha']) ?></td>
             <td>
-              <button class="btn btn-blue btn-sm" onclick="openMsgModal(<?= $m['id'] ?>, <?= json_encode($m['nombre']) ?>, <?= json_encode($m['email']) ?>, <?= json_encode($m['asunto']) ?>, <?= json_encode($m['mensaje']) ?>)">👁 Ver</button>
+              <button class="btn btn-blue btn-sm" onclick='openMsgModal(<?= $m['id'] ?>, <?= json_encode($m['nombre']) ?>, <?= json_encode($m['email']) ?>, <?= json_encode($m['asunto']) ?>, <?= json_encode($m['mensaje']) ?>)'>👁 Ver</button>
               <?php if (!$m['leido']): ?>
               <form method="post" style="display:inline">
                 <input type="hidden" name="id" value="<?= $m['id'] ?>">
                 <button type="submit" name="marcar_leido" class="btn btn-primary btn-sm">✓ Leído</button>
               </form>
               <?php endif; ?>
-              <button class="btn btn-danger btn-sm" onclick="openDelModal(<?= $m['id'] ?>, <?= json_encode($m['nombre']) ?>, 'mensaje')">🗑</button>
+              <button class="btn btn-danger btn-sm" onclick='openDelModal(<?= $m['id'] ?>, <?= json_encode($m['nombre']) ?>, "mensaje")'>🗑</button>
             </td>
           </tr>
           <?php endforeach; ?>
